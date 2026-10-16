@@ -1899,9 +1899,10 @@
                     if (!targetShopName && shop) targetShopName = String(shop).trim();  
 
                     if (titleMy || titleZh || titleTh || titleEn) {  
+                        let cleanShop = String(shop).trim();
                         db.menu.push({   
                             id: Date.now() + Math.random(),   
-                            shop: String(shop).trim(),  
+                            shop: cleanShop,  
                             category: String(category).trim(),  
                             titleMy: String(titleMy).trim(),  
                             titleZh: String(titleZh).trim(),  
@@ -1911,6 +1912,10 @@
                             description: String(description).trim(),  
                             image: String(image).trim()   
                         });  
+
+                        if (!db.shopNames[cleanShop]) {
+                            db.shopNames[cleanShop] = { my: cleanShop, zh: '', th: '', en: '' };
+                        }
                         importedCount++;  
                     }  
                 }  
@@ -1928,4 +1933,4 @@
     }  
 </script>  
 </body>  
-</html>
+    </html>
