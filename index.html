@@ -642,18 +642,22 @@
 
     let db = { menu: [], shopNames: {}, shopLogos: {}, shopClosingTimes: {}, shopManualStatus: {}, cart: [], orders: [] };  
 
-    // Firebase Database Sync
+    // 🔥 FIXED: Safe Array conversion from Firebase Database objects
     function initFirebaseSync() {
         return new Promise((resolve) => {
             database.ref('tachileik_delivery').on('value', (snapshot) => {
                 let val = snapshot.val();
                 if (val) {
-                    db.menu = val.menu || defaultDefaultMenu;
+                    let rawMenu = val.menu;
+                    db.menu = rawMenu ? (Array.isArray(rawMenu) ? rawMenu : Object.values(rawMenu)) : defaultDefaultMenu;
+
                     db.shopNames = val.shopNames || defaultShopNames;
                     db.shopLogos = val.shopLogos || {};
                     db.shopClosingTimes = val.shopClosingTimes || {};
                     db.shopManualStatus = val.shopManualStatus || {};
-                    db.orders = val.orders || [];
+                    
+                    let rawOrders = val.orders;
+                    db.orders = rawOrders ? (Array.isArray(rawOrders) ? rawOrders : Object.values(rawOrders)) : [];
                 } else {
                     db.menu = defaultDefaultMenu;
                     db.shopNames = defaultShopNames;
@@ -1933,4 +1937,4 @@
     }  
 </script>  
 </body>  
-    </html>
+</html>
