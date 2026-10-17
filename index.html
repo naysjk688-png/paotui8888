@@ -642,10 +642,10 @@
 
     let db = { menu: [], shopNames: {}, shopLogos: {}, shopClosingTimes: {}, shopManualStatus: {}, cart: [], orders: [] };  
 
-    // 🔥 100% SAFE SYNC: Never auto-wipes cloud data on delay/null
+    // 🔥 100% SAFE SYNC: Updated to v2 to bypass old browser cache
     function initFirebaseSync() {
         return new Promise((resolve) => {
-            database.ref('tachileik_delivery').on('value', (snapshot) => {
+            database.ref('tachileik_delivery_v2').on('value', (snapshot) => {
                 let val = snapshot.val();
                 if (val && val.menu) {
                     let rawMenu = val.menu;
@@ -669,14 +669,14 @@
         });
     }
 
-    // 🔥 100% SAFE SAVE: Never overwrite cloud database with empty array
+    // 🔥 100% SAFE SAVE: Updated to v2
     function saveDataAsync() {  
         if (!db.menu || db.menu.length === 0) {
             console.warn("Data မရှိသေးသောကြောင့် Cloud သို့ မသိမ်းပါ");
             return;
         }
 
-        database.ref('tachileik_delivery').set({
+        database.ref('tachileik_delivery_v2').set({
             menu: db.menu,
             shopNames: db.shopNames,
             shopLogos: db.shopLogos,
@@ -963,7 +963,7 @@
             db.shopClosingTimes = {};  
             db.shopManualStatus = {};  
             db.orders = [];  
-            database.ref('tachileik_delivery').remove();  
+            database.ref('tachileik_delivery_v2').remove();  
             localStorage.clear();  
             renderAll();  
             alert('ဒေတာများ ဖြတ်ပြီးပါပြီ။');  
