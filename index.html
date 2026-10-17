@@ -642,7 +642,7 @@
 
     let db = { menu: [], shopNames: {}, shopLogos: {}, shopClosingTimes: {}, shopManualStatus: {}, cart: [], orders: [] };  
 
-    // 🔥 FIXED: Safe Sync without auto-wiping cloud data on delay/null
+    // 🔥 100% SAFE SYNC: Never auto-wipes cloud data on delay/null
     function initFirebaseSync() {
         return new Promise((resolve) => {
             database.ref('tachileik_delivery').on('value', (snapshot) => {
@@ -658,7 +658,6 @@
                     let rawOrders = val.orders;
                     db.orders = rawOrders ? (Array.isArray(rawOrders) ? rawOrders : Object.values(rawOrders)) : [];
                 } else {
-                    // Safe fallback locally ONLY, never overwrite cloud database automatically!
                     if (db.menu.length === 0) {
                         db.menu = defaultDefaultMenu;
                         db.shopNames = defaultShopNames;
@@ -670,7 +669,13 @@
         });
     }
 
+    // 🔥 100% SAFE SAVE: Never overwrite cloud database with empty array
     function saveDataAsync() {  
+        if (!db.menu || db.menu.length === 0) {
+            console.warn("Data မရှိသေးသောကြောင့် Cloud သို့ မသိမ်းပါ");
+            return;
+        }
+
         database.ref('tachileik_delivery').set({
             menu: db.menu,
             shopNames: db.shopNames,
@@ -958,7 +963,7 @@
             db.shopClosingTimes = {};  
             db.shopManualStatus = {};  
             db.orders = [];  
-            saveDataAsync();  
+            database.ref('tachileik_delivery').remove();  
             localStorage.clear();  
             renderAll();  
             alert('ဒေတာများ ဖြတ်ပြီးပါပြီ။');  
@@ -1925,9 +1930,7 @@
                     }  
                 }  
 
-                // ⚠️ အရေးကြီးဆုံးစစ်ဆေးချက်: မီနူးအသစ် အနည်းဆုံး ၁ ခု ပါမှသာ ဒေတာဟောင်းထဲ ပေါင်းထည့်မည် (အကုန်မဖျက်တော့ပါ)
                 if (newItems.length > 0) {
-                    // ရှိပြီးသား menu ထဲ အသစ်များကို ပေါင်းထည့်ခြင်း (Append/Merge)
                     db.menu = [...db.menu, ...newItems];
                     db.shopNames = newShopNames;
 
