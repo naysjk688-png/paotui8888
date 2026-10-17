@@ -642,7 +642,7 @@
 
     let db = { menu: [], shopNames: {}, shopLogos: {}, shopClosingTimes: {}, shopManualStatus: {}, cart: [], orders: [] };  
 
-    // 🔥 FIXED: Safe Array conversion from Firebase Database objects
+    // 🔥 FIXED: Safe Sync without auto-wiping cloud data on delay/null
     function initFirebaseSync() {
         return new Promise((resolve) => {
             database.ref('tachileik_delivery').on('value', (snapshot) => {
@@ -659,9 +659,11 @@
                     let rawOrders = val.orders;
                     db.orders = rawOrders ? (Array.isArray(rawOrders) ? rawOrders : Object.values(rawOrders)) : [];
                 } else {
-                    db.menu = defaultDefaultMenu;
-                    db.shopNames = defaultShopNames;
-                    saveDataAsync();
+                    // Safe fallback locally ONLY, never overwrite cloud database automatically!
+                    if (db.menu.length === 0) {
+                        db.menu = defaultDefaultMenu;
+                        db.shopNames = defaultShopNames;
+                    }
                 }
                 renderAll();
                 resolve();
@@ -1098,7 +1100,7 @@
         let shopItems = db.menu.filter(m => m.shop === editingShopName);  
           
         if (shopItems.length === 0) {  
-            container.innerHTML = '<div style="color: #666; font-size: 12px; text-align: center; padding: 20px;">ဤဆိုင်တွင် မီနူးများ မရှိသေးပါ။ အထက်ပါပုံစံတွင် မီနူးအသစ် စတင်ထည့်သွင်းနိုင်ပါသည်။</div>';  
+            container.innerHTML = '<div style="color: #666; font-size: 12px; text-align: center; padding: 20px;">ဤဆိုင်တွင် မီနူးများ မရှိသေးပါခင်ဗျာ။</div>';  
             return;  
         }  
 
@@ -1124,10 +1126,10 @@
                     <div>English: <input type="text" value="${item.titleEn || ''}" style="margin:2px 0 0 0; padding:4px; font-size:11px;" onchange="updateItemLang(${item.id}, 'en', this.value)"></div>  
                 </div>  
                 <div style="margin-bottom: 5px; font-size: 11px;">  
-                    <div>Toppings / ထပ်ပေါင်းစရာများ (ဥပမာ - ကြက်ဥ:+10,အသား:+20): <input type="text" value="${item.description || ''}" placeholder="ကြက်ဥ:+10, အသားပေါင်း:+20" style="margin:2px 0 0 0; padding:4px; font-size:11px;" onchange="updateItemDesc(${item.id}, this.value)"></div>  
+                    <div>Toppings / ထပ်ပေါင်းစရာများ: <input type="text" value="${item.description || ''}" placeholder="ကြက်ဥ:+10, အသားပေါင်း:+20" style="margin:2px 0 0 0; padding:4px; font-size:11px;" onchange="updateItemDesc(${item.id}, this.value)"></div>  
                 </div>  
                 <div style="margin-bottom: 5px; font-size: 11px;">  
-                    <div>Image URL (ပုံလင့်ခ် ထည့်ရန်): <input type="text" value="${item.image || ''}" placeholder="https://... ပုံလင့်ခ်ထည့်ရန်" style="margin:2px 0 0 0; padding:4px; font-size:11px;" onchange="updateItemImage(${item.id}, this.value)"></div>  
+                    <div>Image URL: <input type="text" value="${item.image || ''}" placeholder="https://... ပုံလင့်ခ်ထည့်ရန်" style="margin:2px 0 0 0; padding:4px; font-size:11px;" onchange="updateItemImage(${item.id}, this.value)"></div>  
                 </div>  
                 <div style="display: flex; justify-content: space-between; align-items: center; gap: 5px;">  
                     <div style="display: flex; align-items: center; gap: 2px; width: 100px;">  
@@ -1656,7 +1658,7 @@
                         ${logoImg}  
                         <div>  
                             <div style="font-size: 14px; font-weight: bold; color: #333;">${displayShopName}</div>  
-                            ${closed ? '<span style="font-size:11px; color:#f44336;">(အချိန်အခါတွင် ဆိုင်ပိတ်ထားသည်)</span>' : ''}  
+                            ${closed ? '<span style="font-size:11px; color:#f44336;">(အချိန်အခါတွင် ပိတ်ထားသည်)</span>' : ''}  
                         </div>  
                     </div>  
                     ${badgeTag}  
