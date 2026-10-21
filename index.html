@@ -27,38 +27,13 @@
             box-sizing: border-box;
         }
 
-        .lang-brand-title {
-            color: white;
-            font-weight: bold;
-            font-size: 14px;
-            display: flex;
-            align-items: center;
-            gap: 6px;
-        }
-
-        .lang-select-wrapper {
-            position: relative;
-            display: inline-block;
-        }
-
-        .lang-select { 
-            background: rgba(255,255,255,0.2); 
-            color: white; 
-            border: 1px solid rgba(255,255,255,0.4); 
-            padding: 5px 12px; 
-            border-radius: 20px; 
-            font-weight: bold; 
-            cursor: pointer; 
-            font-size: 13px; 
-            outline: none;
-            backdrop-filter: blur(8px);
-            transition: all 0.3s ease;
-        }  
+        .lang-brand-title { color: white; font-weight: bold; font-size: 14px; display: flex; align-items: center; gap: 6px; }
+        .lang-select-wrapper { position: relative; display: inline-block; }
+        .lang-select { background: rgba(255,255,255,0.2); color: white; border: 1px solid rgba(255,255,255,0.4); padding: 5px 12px; border-radius: 20px; font-weight: bold; cursor: pointer; font-size: 13px; outline: none; backdrop-filter: blur(8px); transition: all 0.3s ease; }  
         .lang-select:hover { background: rgba(255,255,255,0.3); }
         .lang-select option { color: #333; background: #fff; }  
 
         .main-content-wrapper { padding-top: 50px; }
-
         .section { display: none; padding: 15px; }  
         .section.active { display: block !important; }  
 
@@ -80,12 +55,10 @@
         .btn-tg-chat { background: #0088cc; }  
         .btn-wc-chat { background: #07c160; }  
 
-        /* Title with See All link */
         .section-header-title { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
         .section-header-title h3 { font-size: 14px; color: #d32f2f; margin: 0; }
         .see-all-btn { font-size: 11px; color: #d32f2f; background: #ffebee; border: 1px solid #ffcdd2; padding: 3px 8px; border-radius: 12px; font-weight: bold; cursor: pointer; text-decoration: none; }
 
-        /* Enhanced Shop Card with Featured Items Showcase */
         .shop-showcase-card { background: white; border-radius: 14px; padding: 14px; margin-bottom: 15px; border: 1px solid #eee; box-shadow: 0 2px 6px rgba(0,0,0,0.06); }
         .shop-header-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; padding-bottom: 8px; border-bottom: 1px solid #f0f0f0; }
         .shop-info-left { display: flex; align-items: center; gap: 10px; }  
@@ -96,7 +69,6 @@
         .shop-card { background: white; border-radius: 12px; padding: 12px; margin-bottom: 10px; border: 1px solid #eee; display: flex; justify-content: space-between; align-items: center; cursor: pointer; }
         .shop-type-tag { font-size: 11px; color: #d32f2f; font-weight: bold; background: #ffebee; padding: 4px 8px; border-radius: 12px; }
 
-        /* Featured items horizontal slider */
         .featured-items-scroll { display: flex; gap: 10px; overflow-x: auto; padding-bottom: 5px; scrollbar-width: none; }
         .featured-items-scroll::-webkit-scrollbar { display: none; }
         .featured-item-box { background: #fafafa; border: 1px solid #eee; border-radius: 10px; padding: 8px; width: 110px; flex-shrink: 0; display: flex; flex-direction: column; justify-content: space-between; position: relative; }
@@ -107,7 +79,6 @@
         .mini-add-btn { background: #d32f2f; color: white; border: none; width: 24px; height: 24px; border-radius: 50%; font-size: 14px; cursor: pointer; display: flex; align-items: center; justify-content: center; font-weight: bold; }
 
         .shops-grid { display: grid; grid-template-columns: repeat(1, 1fr); gap: 12px; margin-bottom: 15px; }  
-
         .cat-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin-bottom: 15px; }  
         .cat-card { background: white; border: 1px solid #eee; border-radius: 10px; padding: 12px 10px; text-align: center; cursor: pointer; box-shadow: 0 2px 4px rgba(0,0,0,0.04); }  
         .cat-card:hover { border-color: #d32f2f; background: #fffdfd; }  
@@ -144,9 +115,13 @@
         .nav-item div { font-size: 18px; margin-bottom: 2px; }  
 
         .topping-item { display: flex; justify-content: space-between; align-items: center; padding: 8px 0; border-bottom: 1px solid #f0f0f0; }  
-
         .item-note-input { width: 100%; padding: 6px 10px; margin-top: 6px; margin-bottom: 0; border: 1px dashed #ccc; border-radius: 5px; font-size: 11px; background: #fffdfa; color: #333; box-sizing: border-box; }
-        .item-note-input:focus { border-color: #d32f2f; outline: none; background: #fff; }
+
+        /* Modern Choice Buttons (Meat Selection Grid) */
+        .option-choice-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 8px; margin-bottom: 12px; }
+        .option-choice-btn { background: #f8f9fa; border: 1px solid #ddd; padding: 10px; border-radius: 8px; text-align: center; font-size: 12px; font-weight: bold; cursor: pointer; transition: all 0.2s; color: #444; }
+        .option-choice-btn.selected { background: #ffebee; border-color: #d32f2f; color: #d32f2f; }
+        .option-tag-req { font-size: 10px; background: #e0e0e0; color: #555; padding: 2px 6px; border-radius: 4px; margin-left: 5px; }
     </style>
 </head>  
 <body>  
@@ -171,14 +146,26 @@
     <img id="modalImg" src="">  
 </div>  
 
-<!-- TOOPING / ADD-ONS MODAL -->  
+<!-- TOOPING / OPTION SELECTION MODAL (ENHANCED) -->  
 <div id="toppingModal" class="modal">  
-    <div class="card" style="width: 85%; max-width: 350px; padding: 20px; position: relative;">  
-        <span style="position: absolute; top: 10px; right: 15px; font-size: 22px; cursor: pointer; font-weight: bold;" onclick="closeToppingModal()">&times;</span>  
-        <h3 id="topping-item-name" style="color: #d32f2f; margin-top: 0; margin-bottom: 5px;">အမယ်အမည်</h3>  
-        <p style="font-size: 12px; color: #666; margin-top:0;">ထပ်ပေါင်းထည့်ချင်သည့် Toppings / Add-ons များ ရွေးချယ်ပါ -</p>  
-        <div id="topping-list-container" style="max-height: 200px; overflow-y: auto; margin-bottom: 15px;"></div>  
-        <button class="btn" style="width: 100%;" onclick="confirmAddToCartWithToppings()">ခြင်းတောင်းထဲထည့်မည်</button>  
+    <div class="card" style="width: 88%; max-width: 380px; padding: 18px; position: relative; border-radius: 14px;">  
+        <span style="position: absolute; top: 12px; right: 15px; font-size: 22px; cursor: pointer; font-weight: bold; color: #888;" onclick="closeToppingModal()">&times;</span>  
+        
+        <div id="topping-modal-header" style="text-align: center; margin-bottom: 12px;">
+            <img id="modal-item-thumb" src="" style="width: 100px; height: 100px; object-fit: cover; border-radius: 10px; margin-bottom: 8px; display: none;">
+            <h3 id="topping-item-name" style="color: #333; margin: 0; font-size: 16px;">အမယ်အမည်</h3>  
+            <div id="topping-item-base-price" style="color: #d32f2f; font-weight: bold; font-size: 15px; margin-top: 2px;">฿0</div>
+        </div>
+
+        <div id="topping-list-container" style="max-height: 320px; overflow-y: auto; padding-right: 2px;"></div>  
+
+        <div style="margin-top: 15px; border-top: 1px solid #eee; padding-top: 12px; display: flex; justify-content: space-between; align-items: center;">
+            <div>
+                <span style="font-size: 11px; color: #666;">ကျသင့်ငွေ:</span><br>
+                <b id="modal-calculated-total" style="font-size: 16px; color: #d32f2f;">฿0</b>
+            </div>
+            <button class="btn" style="padding: 10px 18px; border-radius: 20px;" onclick="confirmAddToCartWithToppings()">ခြင်းတောင်းထဲထည့်မည်</button>  
+        </div>
     </div>  
 </div>  
 
@@ -422,7 +409,7 @@
                 </select>  
                 <input type="number" id="new-item-price" placeholder="ဈေးနှုန်း (฿)" style="margin:2px 0; padding:5px; font-size:11px;">  
             </div>  
-            <input type="text" id="new-item-desc" placeholder="Toppings (ဥပမာ - ကြက်ဥ:+10,အသား:+20)" style="margin:2px 0; padding:5px; font-size:11px;">  
+            <input type="text" id="new-item-desc" placeholder="အသားရွေး:[ဝက်,ကြက်,နွား:+11,ပင်လယ်စာ:+11]" style="margin:2px 0; padding:5px; font-size:11px;">  
             <input type="text" id="new-item-img" placeholder="Image URL (ပုံလင့်ခ် ထည့်ရန်)" style="margin:2px 0; padding:5px; font-size:11px;">  
             <button class="btn" style="background: #2e7d32; width: 100%; margin-top: 5px; padding: 6px; font-size: 12px;" onclick="addNewMenuItemDirectly()">➕ မီနူးအသစ် ထည့်မည်</button>  
         </div>  
@@ -471,9 +458,12 @@
     let activeCategoryKey = 'food';  
     let editingShopName = '';  
     let targetRenameShopKey = '';  
+    
+    // Modal selection state
     let pendingItemForTopping = null;  
+    let selectedMeatOption = null; 
     let selectedToppings = [];  
-      
+
     const adminTelegramUser = "Paotui8888";  
     const adminWeChatId = "wxid_dwee7vqfh8qz22";  
 
@@ -693,12 +683,12 @@
             id: 101,
             shop: "Kungfu Burger 功夫汉堡",
             category: "food",
-            titleMy: "ကွန်ဖူးဘာဂါ (Beef Burger)",
-            titleZh: "功夫牛肉汉堡",
-            titleTh: "กังฟูเบอร์เกอร์",
-            titleEn: "Kungfu Burger",
-            price: 50,
-            description: "အသားထပ်:+15, ဒိန်ခဲ:+10",
+            titleMy: "ကြော်မန်း(ဝက်/ကြက်/နွား/ပင်လယ်)",
+            titleZh: "炒面(猪/鸡/牛/海鲜)",
+            titleTh: "ผัดหมี่ (หมู/ไก่/เนื้อ/ทะเล)",
+            titleEn: "Fried Noodles (Pork/Chicken/Beef/Seafood)",
+            price: 99,
+            description: "အသားရွေး:[🐷 ဝက်သား, 🐔 ကြက်သား, 🐮 နွားသား:+11, 🦐 ပင်လယ်သား:+11]",
             image: "",
             isFeatured: true
         }
@@ -709,6 +699,21 @@
     };
 
     let db = { menu: [], shopNames: {}, shopLogos: {}, shopClosingTimes: {}, shopManualStatus: {}, cart: [], orders: [] };  
+
+    function autoFixOldDescriptions() {
+        let changed = false;
+        if (db.menu && db.menu.length > 0) {
+            db.menu.forEach(item => {
+                if (item.description && (item.description.includes('📌 ကြက်') || !item.description.includes('['))) {
+                    if (item.description.includes('ကြက်+10') || item.description.includes('ကြက်ဥ:+10')) {
+                        item.description = "အသားရွေး:[🐷 ဝက်သား, 🐔 ကြက်သား, 🐮 နွားသား:+11, 🦐 ပင်လယ်သား:+11]";
+                        changed = true;
+                    }
+                }
+            });
+        }
+        if (changed) saveDataAsync();
+    }
 
     function initFirebaseSync() {
         return new Promise((resolve) => {
@@ -730,6 +735,7 @@
                         db.shopNames = defaultShopNames;
                     }
                 }
+                autoFixOldDescriptions();
                 renderAll();
                 resolve();
             });
@@ -933,11 +939,8 @@
 
     function openCategoryShops(typeKey, categoryTitle) {  
         document.getElementById('category-shops-title').innerText = categoryTitle;  
-
         let container = document.getElementById('category-shops-container');  
-
         let allShopsList = [...new Set([...Object.keys(db.shopNames), ...db.menu.map(m => m.shop)])];  
-
         let filteredShops = [];  
 
         if (typeKey === 'all') {  
@@ -1182,7 +1185,7 @@
                     <div>English: <input type="text" value="${item.titleEn || ''}" style="margin:2px 0 0 0; padding:4px; font-size:11px;" onchange="updateItemLang(${item.id}, 'en', this.value)"></div>  
                 </div>  
                 <div style="margin-bottom: 5px; font-size: 11px;">  
-                    <div>Toppings / ထပ်ပေါင်းစရာများ: <input type="text" value="${item.description || ''}" placeholder="ကြက်ဥ:+10, အသားပေါင်း:+20" style="margin:2px 0 0 0; padding:4px; font-size:11px;" onchange="updateItemDesc(${item.id}, this.value)"></div>  
+                    <div>အသားရွေး/Toppings: <input type="text" value="${item.description || ''}" placeholder="အသားရွေး:[ဝက်,ကြက်,နွား:+11,ပင်လယ်စာ:+11]" style="margin:2px 0 0 0; padding:4px; font-size:11px;" onchange="updateItemDesc(${item.id}, this.value)"></div>  
                 </div>  
                 <div style="margin-bottom: 5px; font-size: 11px;">  
                     <div>Image URL: <input type="text" value="${item.image || ''}" placeholder="https://... ပုံလင့်ခ်ထည့်ရန်" style="margin:2px 0 0 0; padding:4px; font-size:11px;" onchange="updateItemImage(${item.id}, this.value)"></div>  
@@ -1604,21 +1607,48 @@
         container.innerHTML = html;  
     }  
 
-    function parseToppings(descText) {  
-        if (!descText) return [];  
-        let list = [];  
+    // Advanced Option / Topping Parser
+    function parseOptionsAndToppings(descText) {
+        if (!descText) return { meatOptions: [], addOns: [] };
+        
+        let meatOptions = [];
+        let addOns = [];
+
+        // Check for required options bracket pattern e.g. အသားရွေး:[ဝက်,ကြက်,နွား:+11,ပင်လယ်စာ:+11]
+        let meatMatch = descText.match(/([^{}\[\]:]+):\[(.*?)\]/);
+        if (meatMatch) {
+            let groupName = meatMatch[1].trim();
+            let optionsStr = meatMatch[2];
+            let opts = optionsStr.split(/[,၊]/);
+            opts.forEach(o => {
+                let pVal = 0;
+                let name = o.trim();
+                if (o.includes(':')) {
+                    let parts = o.split(':');
+                    name = parts[0].trim();
+                    pVal = parseFloat(parts[1].replace(/[^0-9.]/g, '')) || 0;
+                }
+                if (name) meatOptions.push({ group: groupName, name, price: pVal });
+            });
+            
+            // Remove meat group from descText to parse remaining toppings
+            descText = descText.replace(meatMatch[0], '');
+        }
+
+        // Parse remaining add-ons e.g. ကြက်ဥ:+10, အသားပေါင်း:+20
         let parts = descText.split(/[,၊]/);  
         parts.forEach(p => {  
             if (p.includes(':')) {  
                 let [name, priceStr] = p.split(':');  
                 let pVal = parseFloat(priceStr.replace(/[^0-9.]/g, '')) || 0;  
                 if (name.trim()) {  
-                    list.push({ name: name.trim(), price: pVal });  
+                    addOns.push({ name: name.trim(), price: pVal });  
                 }  
             }  
         });  
-        return list;  
-    }  
+
+        return { meatOptions, addOns };
+    }
 
     function handleAddToCartClick(itemId) {  
         let item = db.menu.find(m => m.id === itemId);  
@@ -1629,32 +1659,87 @@
             return;  
         }  
 
-        let toppings = parseToppings(item.description);  
-        if (toppings.length > 0) {  
+        let parsed = parseOptionsAndToppings(item.description);  
+        if (parsed.meatOptions.length > 0 || parsed.addOns.length > 0 || (item.description && item.description.trim() !== '')) {  
             pendingItemForTopping = item;  
+            selectedMeatOption = parsed.meatOptions.length > 0 ? parsed.meatOptions[0] : null;  
             selectedToppings = [];  
-            openToppingModal(item, toppings);  
+            openToppingModal(item, parsed);  
         } else {  
-            addToCartDirect(item, []);  
+            addToCartDirect(item, null, []);  
         }  
     }  
 
-    function openToppingModal(item, toppings) {  
+    function openToppingModal(item, parsed) {  
         document.getElementById('topping-item-name').innerText = getItemTitle(item);  
+        document.getElementById('topping-item-base-price').innerText = `฿${item.price}`;
+        
+        let thumbEl = document.getElementById('modal-item-thumb');
+        if (item.image) {
+            thumbEl.src = item.image;
+            thumbEl.style.display = 'block';
+        } else {
+            thumbEl.style.display = 'none';
+        }
+
         let container = document.getElementById('topping-list-container');  
         let html = '';  
-        toppings.forEach((top, idx) => {  
-            html += `<div class="topping-item">  
-                <label style="font-size: 13px; cursor:pointer; display:flex; align-items:center; gap:8px;">  
-                    <input type="checkbox" onchange="toggleToppingSelection(${idx}, '${top.name}', ${top.price}, this.checked)">  
-                    <b>${top.name}</b>  
-                </label>  
-                <b style="color:#d32f2f;">+฿${top.price}</b>  
-            </div>`;  
-        });  
+
+        // Meat / Type selection grid
+        if (parsed.meatOptions.length > 0) {
+            let groupTitle = parsed.meatOptions[0].group || 'အသားရွေးရန်';
+            html += `<div style="margin-bottom: 12px;">
+                <div style="font-size: 13px; font-weight: bold; color: #333;">
+                    ${groupTitle} <span class="option-tag-req" style="font-size: 10px; background: #ffebee; color: #d32f2f; padding: 2px 6px; border-radius: 4px;">မဖြစ်မနေ</span>
+                </div>
+                <div style="font-size: 11px; color: #888; margin-top: 2px;">ရွေးရန်လို • ၁ ခုရွေးပါ</div>
+                <div class="option-choice-grid">`;
+            
+            parsed.meatOptions.forEach((opt, idx) => {
+                let isSel = (selectedMeatOption && selectedMeatOption.name === opt.name) ? 'selected' : '';
+                let priceTxt = opt.price > 0 ? ` +฿${opt.price}` : '';
+                html += `<div class="option-choice-btn ${isSel}" onclick="selectMeatOption('${opt.name}', ${opt.price}, '${opt.group}')">${opt.name}${priceTxt}</div>`;
+            });
+
+            html += `</div></div>`;
+        }
+
+        // Add-ons / Toppings checkboxes
+        if (parsed.addOns.length > 0) {
+            html += `<div style="margin-bottom: 10px;">
+                <div style="font-size: 13px; font-weight: bold; color: #333; margin-bottom: 6px;">ထပ်ပေါင်းစရာများ (Add-ons)</div>`;
+            
+            parsed.addOns.forEach((top, idx) => {  
+                html += `<div class="topping-item">  
+                    <label style="font-size: 13px; cursor:pointer; display:flex; align-items:center; gap:8px;">  
+                        <input type="checkbox" onchange="toggleToppingSelection(${idx}, '${top.name}', ${top.price}, this.checked)">  
+                        <b>${top.name}</b>  
+                    </label>  
+                    <b style="color:#d32f2f;">+฿${top.price}</b>  
+                </div>`;  
+            });
+            html += `</div>`;
+        }
+
+        if (parsed.meatOptions.length === 0 && parsed.addOns.length === 0) {
+            html += `<div style="font-size: 12px; color: #666; text-align: center; padding: 10px;">${item.description}</div>`;
+        }
+
         container.innerHTML = html;  
+        updateModalCalculatedPrice();
         document.getElementById('toppingModal').style.display = 'flex';  
     }  
+
+    function selectMeatOption(name, price, group) {
+        selectedMeatOption = { name, price, group };
+        document.querySelectorAll('.option-choice-btn').forEach(btn => {
+            btn.classList.remove('selected');
+            if (btn.innerText.includes(name)) {
+                btn.classList.add('selected');
+            }
+        });
+        updateModalCalculatedPrice();
+    }
 
     function toggleToppingSelection(idx, name, price, isChecked) {  
         if (isChecked) {  
@@ -1662,26 +1747,48 @@
         } else {  
             selectedToppings = selectedToppings.filter(t => t.name !== name);  
         }  
+        updateModalCalculatedPrice();
     }  
+
+    function updateModalCalculatedPrice() {
+        if (!pendingItemForTopping) return;
+        let base = pendingItemForTopping.price;
+        let meatExtra = selectedMeatOption ? selectedMeatOption.price : 0;
+        let toppingExtra = selectedToppings.reduce((sum, t) => sum + t.price, 0);
+        let total = base + meatExtra + toppingExtra;
+        document.getElementById('modal-calculated-total').innerText = `฿${total}`;
+    }
 
     function closeToppingModal() {  
         document.getElementById('toppingModal').style.display = 'none';  
         pendingItemForTopping = null;  
+        selectedMeatOption = null;
         selectedToppings = [];  
     }  
 
     function confirmAddToCartWithToppings() {  
         if (pendingItemForTopping) {  
-            addToCartDirect(pendingItemForTopping, selectedToppings);  
+            let parsed = parseOptionsAndToppings(pendingItemForTopping.description);
+            if (parsed.meatOptions.length > 0 && !selectedMeatOption) {
+                alert('ကျေးဇူးပြု၍ အသားအမျိုးအစား ၁ ခု မဖြစ်မနေ ရွေးချယ်ပေးပါရန်!');
+                return;
+            }
+            addToCartDirect(pendingItemForTopping, selectedMeatOption, selectedToppings);  
             closeToppingModal();  
         }  
     }  
 
-    function addToCartDirect(item, toppingsList) {  
+    function addToCartDirect(item, meatOpt, toppingsList) {  
         let displayTitle = getItemTitle(item);  
-        let toppingExtraPrice = toppingsList.reduce((sum, t) => sum + t.price, 0);  
-        let finalPrice = item.price + toppingExtraPrice;  
-        let toppingText = toppingsList.map(t => `${t.name}(+฿${t.price})`).join(', ');  
+        let meatExtra = meatOpt ? meatOpt.price : 0;
+        let toppingExtra = toppingsList.reduce((sum, t) => sum + t.price, 0);  
+        let finalPrice = item.price + meatExtra + toppingExtra;  
+        
+        let optionDetails = [];
+        if (meatOpt) optionDetails.push(`${meatOpt.name}${meatOpt.price > 0 ? '(+฿'+meatOpt.price+')' : ''}`);
+        toppingsList.forEach(t => optionDetails.push(`${t.name}(+฿${t.price})`));
+
+        let toppingText = optionDetails.join(', ');  
 
         let existing = db.cart.find(c => c.id === item.id && c.toppingText === toppingText);  
         if (existing) {  
@@ -1710,11 +1817,7 @@
 
     function renderShopsList() {  
         let t = translations[currentLang] || translations.my;  
-        
-        // Filter featured items selected in menu
         let featuredItems = db.menu.filter(m => !!m.isFeatured);
-        
-        // Group featured items by shop
         let shopFeaturedMap = {};
         featuredItems.forEach(item => {
             if (!shopFeaturedMap[item.shop]) {
@@ -1724,17 +1827,14 @@
         });
 
         let featuredShops = Object.keys(shopFeaturedMap);
-        
         let html = '';  
         if (featuredShops.length === 0) {  
             html = `<div style="color: #666; font-size: 12px; text-align: center; padding: 20px; background: white; border-radius: 10px;">${t.noFeaturedItems}</div>`;  
         } else {  
             featuredShops.forEach(shop => {  
                 let displayShopName = getShopDisplayTitle(shop);  
-                
                 let logoImg = db.shopLogos[shop] ? `<img src="${db.shopLogos[shop]}" class="shop-logo">` : `<div class="shop-logo">🛍️</div>`;  
                 let closed = isShopClosed(shop);  
-                
                 let shopItems = shopFeaturedMap[shop]; 
                 let featuredItemsHtml = '';
                 
@@ -1805,7 +1905,7 @@
             let itemTotal = item.price * item.qty;  
             subtotal += itemTotal;  
             let thumbHtml = item.image ? `<img src="${item.image}" style="width:35px; height:35px; object-fit:cover; border-radius:4px; vertical-align:middle; margin-right:5px;">` : '';  
-            let optHtml = item.toppingText ? `<br><span style="color:#e65100; font-size:10px;">(+Toppings: ${item.toppingText})</span>` : '';  
+            let optHtml = item.toppingText ? `<br><span style="color:#e65100; font-size:10px;">(+${item.toppingText})</span>` : '';  
               
             html += `<div style="padding: 10px 0; border-bottom: 1px solid #eee; font-size: 13px;">  
                 <div style="display: flex; justify-content: space-between; align-items:center;">
@@ -1952,7 +2052,6 @@
     function renderOrders() {  
         let t = translations[currentLang] || translations.my;  
         let container1 = document.getElementById('my-orders-list');  
-          
         cleanOldOrders();  
 
         let savedPhone = localStorage.getItem('tachileik_customer_phone') || '';  
