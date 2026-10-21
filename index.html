@@ -117,7 +117,6 @@
         .topping-item { display: flex; justify-content: space-between; align-items: center; padding: 8px 0; border-bottom: 1px solid #f0f0f0; }  
         .item-note-input { width: 100%; padding: 6px 10px; margin-top: 6px; margin-bottom: 0; border: 1px dashed #ccc; border-radius: 5px; font-size: 11px; background: #fffdfa; color: #333; box-sizing: border-box; }
 
-        /* Modern Choice Buttons (Meat Selection Grid) */
         .option-choice-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 8px; margin-bottom: 12px; }
         .option-choice-btn { background: #f8f9fa; border: 1px solid #ddd; padding: 10px; border-radius: 8px; text-align: center; font-size: 12px; font-weight: bold; cursor: pointer; transition: all 0.2s; color: #444; }
         .option-choice-btn.selected { background: #ffebee; border-color: #d32f2f; color: #d32f2f; }
@@ -126,7 +125,6 @@
 </head>  
 <body>  
 
-<!-- MODERN STICKY LANGUAGE BAR -->
 <div class="fixed-lang-bar">  
     <div class="lang-brand-title">🌐 大其力跑腿8888</div>
     <div class="lang-select-wrapper">
@@ -146,7 +144,6 @@
     <img id="modalImg" src="">  
 </div>  
 
-<!-- TOOPING / OPTION SELECTION MODAL (ENHANCED) -->  
 <div id="toppingModal" class="modal">  
     <div class="card" style="width: 88%; max-width: 380px; padding: 18px; position: relative; border-radius: 14px;">  
         <span style="position: absolute; top: 12px; right: 15px; font-size: 22px; cursor: pointer; font-weight: bold; color: #888;" onclick="closeToppingModal()">&times;</span>  
@@ -169,7 +166,6 @@
     </div>  
 </div>  
 
-<!-- RENAME SHOP MODAL (MULTILINGUAL) -->  
 <div id="renameShopModal" class="modal">  
     <div class="card" style="width: 85%; max-width: 350px; padding: 20px; position: relative;">  
         <span style="position: absolute; top: 10px; right: 15px; font-size: 22px; cursor: pointer; font-weight: bold;" onclick="closeRenameShopModal()">&times;</span>  
@@ -183,7 +179,6 @@
     </div>  
 </div>  
 
-<!-- HOME TAB (INDEX 0) -->  
 <div id="sec-home" class="section active">  
     <div class="delivery-info-box">  
         <span style="font-size: 12px; font-weight: bold;" id="txt-delivery-banner">🚀 24နာရီ ပို့ဆောင်ရေးဝန်ဆောင်မှု | Telegram နှင့် WeChat တို့မှလည်း တိုက်ရိုက်မှာကြားနိုင်ပါသည်</span>  
@@ -219,7 +214,6 @@
     <div class="shops-grid" id="shops-grid-container"></div>  
 </div>  
 
-<!-- SHOPS CATEGORY TAB (INDEX 1) -->  
 <div id="sec-categories" class="section">  
     <h3 id="txt-cat-title" style="color: #d32f2f; margin-top:0;">🛍️ Shop Categories</h3>  
     <p id="txt-cat-sub" style="font-size:12px; color:#666; margin-bottom:12px;">Select a shop category you want to view -</p>  
@@ -264,7 +258,6 @@
     </div>  
 </div>  
 
-<!-- CATEGORY SHOPS VIEW -->  
 <div id="sec-category-shops" class="section">  
     <div style="background: white; padding: 10px 15px; border-bottom: 1px solid #eee; display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px;">  
         <button class="btn" style="background:#666; padding: 5px 10px;" onclick="switchTab(1)">← အမျိုးအစားများသို့</button>  
@@ -274,7 +267,6 @@
     <div class="shops-grid" id="category-shops-container"></div>  
 </div>  
 
-<!-- SHOP MENU VIEW -->  
 <div id="sec-shop-menu" style="display: none;">  
     <div style="background: white; padding: 10px 15px; border-bottom: 1px solid #eee; display: flex; align-items: center; justify-content: space-between;">  
         <button class="btn" id="btn-back-home" style="background:#666; padding: 5px 10px;" onclick="backToShopList()">← ဆိုင်စာရင်းသို့</button>  
@@ -287,14 +279,12 @@
     </div>  
 </div>  
 
-<!-- ORDERS TAB (INDEX 2) -->  
 <div id="sec-orders" class="section">  
     <h3 id="txt-sec3-title" style="color: #d32f2f; margin-top:0;">အော်ဒါမှတ်တမ်းများ</h3>  
     <p id="txt-sec3-sub" style="font-size: 11px; color: #666; margin-top:-5px; margin-bottom:10px;">⏰ မှာယူထားသော အော်ဒါများကို ပြသပေးထားပါသည်။</p>  
     <div id="my-orders-list"></div>  
 </div>  
 
-<!-- CART TAB (INDEX 3) -->  
 <div id="sec-cart" class="section">  
     <h3 id="txt-sec4-title" style="color: #d32f2f; margin-top:0;">ခြင်းတောင်း (Cart)</h3>  
     <div id="cart-items-container" style="background: white; padding: 10px; border-radius: 10px; min-height: 120px; margin-bottom: 10px; border: 1px solid #eee;"></div>  
@@ -338,7 +328,6 @@
     </div>  
 </div>  
 
-<!-- ADMIN PANEL DIRECT PAGE -->  
 <div id="sec-admin-direct" class="section">  
     <div style="background: #d32f2f; color: white; padding: 12px 15px; border-radius: 10px; margin-bottom: 15px; display: flex; justify-content: space-between; align-items: center;">  
         <div>  
@@ -418,7 +407,6 @@
     </div>  
 </div>  
 
-<!-- CUSTOMER BOTTOM NAV BAR -->  
 <div class="bottom-nav">  
     <div class="nav-item active" onclick="switchTab(0)" id="nav-0"><div>🏠</div><span id="lbl-home">ပင်မ</span></div>  
     <div class="nav-item" onclick="switchTab(1)" id="nav-1"><div>🛍️</div><span id="lbl-cat">ဆိုင်များ</span></div>  
@@ -426,13 +414,12 @@
     <div class="nav-item" onclick="switchTab(3)" id="nav-3"><div>🛒</div><span id="lbl-cart">ခြင်းတောင်း</span></div>  
 </div>  
 
-</div> <!-- END main-content-wrapper -->
+</div>
 
 <script>  
     const TELEGRAM_BOT_TOKEN = "8787623608:AAHYOBTkiR-TKlGX3eH-e8y8lq9DmCfnEHs";  
     const TELEGRAM_GROUP_ID = "-1004398841553";  
 
-    // 👉 Firebase Config
     const firebaseConfig = {
         apiKey: "AIzaSyAKuxxWNRPyWc6SLGJKucXcMLgPIFBTC5E", 
         authDomain: "paotui8888.firebaseapp.com",
@@ -459,7 +446,6 @@
     let editingShopName = '';  
     let targetRenameShopKey = '';  
     
-    // Modal selection state
     let pendingItemForTopping = null;  
     let selectedMeatOption = null; 
     let selectedToppings = [];  
@@ -1414,8 +1400,7 @@
         if (activeShopName) {  
             document.getElementById('selected-shop-title').innerText = `🛍️ ${getShopDisplayTitle(activeShopName)}`;  
             renderShopCategories();  
-            let shopItems = db.menu.filter(m => m.shop === activeShopName);  
-            renderShopItemsContinuous(shopItems);  
+            renderShopItemsContinuous();  
         }  
           
         renderAll();  
@@ -1485,8 +1470,7 @@
         activeCategoryKey = 'food';  
         document.getElementById('selected-shop-title').innerText = `🛍️ ${getShopDisplayTitle(shopName)}`;  
         renderShopCategories();  
-        let shopItems = db.menu.filter(m => m.shop === shopName);  
-        renderShopItemsContinuous(shopItems);  
+        renderShopItemsContinuous();  
           
         document.querySelectorAll('.section').forEach(sec => {  
             sec.classList.remove('active');  
@@ -1561,10 +1545,14 @@
         return "food";  
     }  
 
-    function renderShopItemsContinuous(shopItems) {  
+    // 👉 FIXED SHOP FILTERING LOGIC
+    function renderShopItemsContinuous() {  
         let t = translations[currentLang] || translations.my;  
         let container = document.getElementById('shop-menu-items-list');  
         let html = '';  
+
+        // 👉 STRICT SHOP FILTER: Filter items by activeShopName only!
+        let shopItems = db.menu.filter(m => String(m.shop || '').trim() === String(activeShopName || '').trim());
 
         let categoriesInOrder = ['food', 'dessert', 'drinks'];  
         let hasAnyItems = false;  
@@ -1607,14 +1595,12 @@
         container.innerHTML = html;  
     }  
 
-    // Advanced Option / Topping Parser
     function parseOptionsAndToppings(descText) {
         if (!descText) return { meatOptions: [], addOns: [] };
         
         let meatOptions = [];
         let addOns = [];
 
-        // Check for required options bracket pattern e.g. အသားရွေး:[ဝက်,ကြက်,နွား:+11,ပင်လယ်စာ:+11]
         let meatMatch = descText.match(/([^{}\[\]:]+):\[(.*?)\]/);
         if (meatMatch) {
             let groupName = meatMatch[1].trim();
@@ -1631,11 +1617,9 @@
                 if (name) meatOptions.push({ group: groupName, name, price: pVal });
             });
             
-            // Remove meat group from descText to parse remaining toppings
             descText = descText.replace(meatMatch[0], '');
         }
 
-        // Parse remaining add-ons e.g. ကြက်ဥ:+10, အသားပေါင်း:+20
         let parts = descText.split(/[,၊]/);  
         parts.forEach(p => {  
             if (p.includes(':')) {  
@@ -1685,7 +1669,6 @@
         let container = document.getElementById('topping-list-container');  
         let html = '';  
 
-        // Meat / Type selection grid
         if (parsed.meatOptions.length > 0) {
             let groupTitle = parsed.meatOptions[0].group || 'အသားရွေးရန်';
             html += `<div style="margin-bottom: 12px;">
@@ -1704,7 +1687,6 @@
             html += `</div></div>`;
         }
 
-        // Add-ons / Toppings checkboxes
         if (parsed.addOns.length > 0) {
             html += `<div style="margin-bottom: 10px;">
                 <div style="font-size: 13px; font-weight: bold; color: #333; margin-bottom: 6px;">ထပ်ပေါင်းစရာများ (Add-ons)</div>`;
