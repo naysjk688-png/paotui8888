@@ -10,20 +10,67 @@
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>  
     <style>  
         body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; margin: 0; background: #f8f9fa; color: #333; padding-bottom: 70px; }  
-        header { background: #d32f2f; color: white; padding: 12px 15px; display: flex; justify-content: space-between; align-items: center; font-size: 16px; font-weight: bold; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }  
-        .lang-select { background: rgba(255,255,255,0.2); color: white; border: 1px solid rgba(255,255,255,0.4); padding: 5px 8px; border-radius: 4px; font-weight: bold; cursor: pointer; }  
+        
+        /* Modern Sticky Language Bar */
+        .fixed-lang-bar { 
+            position: fixed; 
+            top: 0; 
+            left: 0; 
+            width: 100%; 
+            z-index: 3000; 
+            background: linear-gradient(135deg, #e53935, #b71c1c); 
+            padding: 8px 16px; 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center; 
+            box-shadow: 0 3px 10px rgba(0,0,0,0.15); 
+            box-sizing: border-box;
+        }
+
+        .lang-brand-title {
+            color: white;
+            font-weight: bold;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .lang-select-wrapper {
+            position: relative;
+            display: inline-block;
+        }
+
+        .lang-select { 
+            background: rgba(255,255,255,0.2); 
+            color: white; 
+            border: 1px solid rgba(255,255,255,0.4); 
+            padding: 5px 12px; 
+            border-radius: 20px; 
+            font-weight: bold; 
+            cursor: pointer; 
+            font-size: 13px; 
+            outline: none;
+            backdrop-filter: blur(8px);
+            transition: all 0.3s ease;
+        }  
+        .lang-select:hover { background: rgba(255,255,255,0.3); }
         .lang-select option { color: #333; background: #fff; }  
+
+        .main-content-wrapper { padding-top: 50px; }
+
         .section { display: none; padding: 15px; }  
         .section.active { display: block !important; }  
 
-        .location-box { background: linear-gradient(135deg, #d32f2f, #b71c1c); padding: 12px 15px; border-radius: 12px; margin-bottom: 12px; color: white; box-shadow: 0 2px 6px rgba(211,47,47,0.3); display: flex; justify-content: space-between; align-items: center; }  
+        /* Delivery info header box */
+        .delivery-info-box { background: linear-gradient(135deg, #d32f2f, #b71c1c); padding: 12px 15px; border-radius: 12px; margin-bottom: 12px; color: white; box-shadow: 0 2px 6px rgba(211,47,47,0.3); text-align: center; }  
           
         .bio-card { background: white; border-radius: 12px; padding: 15px; margin-bottom: 12px; border: 1px solid #eee; box-shadow: 0 2px 5px rgba(0,0,0,0.05); position: relative; }  
         .bio-header-flex { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 8px; }  
         .bio-title { font-size: 16px; font-weight: bold; color: #d32f2f; display: flex; align-items: center; gap: 6px; }  
         .bio-sub { font-size: 12px; color: #666; margin-bottom: 12px; }  
-        .bio-list { font-size: 13px; line-height: 1.8; color: #333; background: #fafafa; padding: 10px 12px; border-radius: 8px; border-left: 3px solid #d32f2f; }  
-        .bio-footer { font-size: 11px; color: #777; margin-top: 10px; text-align: center; font-weight: bold; }  
+        .bio-list { font-size: 12px; line-height: 1.6; color: #333; background: #fafafa; padding: 8px 10px; border-radius: 8px; border-left: 3px solid #d32f2f; text-align: center; font-weight: bold; }  
+        .bio-footer { font-size: 11px; color: #d32f2f; margin-top: 10px; text-align: center; font-weight: bold; background: #fff5f5; padding: 8px; border-radius: 6px; border: 1px dashed #ffcdd2; }  
 
         .admin-top-btn { background: #ffebee; color: #d32f2f; border: 1px solid #d32f2f; padding: 5px 12px; border-radius: 20px; font-size: 12px; font-weight: bold; cursor: pointer; display: flex; align-items: center; gap: 4px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }  
         .admin-top-btn:hover { background: #d32f2f; color: white; }  
@@ -33,15 +80,33 @@
         .btn-tg-chat { background: #0088cc; }  
         .btn-wc-chat { background: #07c160; }  
 
-        .search-bar { background: white; padding: 10px 14px; border-radius: 25px; display: flex; align-items: center; margin-bottom: 15px; box-shadow: 0 2px 5px rgba(0,0,0,0.08); border: 1px solid #eee; }  
-        .search-bar input { border: none; outline: none; width: 100%; font-size: 14px; margin-left: 8px; }  
+        /* Title with See All link */
+        .section-header-title { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
+        .section-header-title h3 { font-size: 14px; color: #d32f2f; margin: 0; }
+        .see-all-btn { font-size: 11px; color: #d32f2f; background: #ffebee; border: 1px solid #ffcdd2; padding: 3px 8px; border-radius: 12px; font-weight: bold; cursor: pointer; text-decoration: none; }
+
+        /* Enhanced Shop Card with Featured Items Showcase */
+        .shop-showcase-card { background: white; border-radius: 14px; padding: 14px; margin-bottom: 15px; border: 1px solid #eee; box-shadow: 0 2px 6px rgba(0,0,0,0.06); }
+        .shop-header-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; padding-bottom: 8px; border-bottom: 1px solid #f0f0f0; }
+        .shop-info-left { display: flex; align-items: center; gap: 10px; }  
+        .shop-logo { width: 45px; height: 45px; border-radius: 50%; object-fit: cover; background: #ffebee; display: flex; align-items: center; justify-content: center; font-size: 20px; color: #d32f2f; flex-shrink: 0; }  
+        .shop-name-txt { font-size: 15px; font-weight: bold; color: #333; }
+        .view-menu-link { font-size: 11px; background: #ffebee; color: #d32f2f; padding: 5px 10px; border-radius: 15px; font-weight: bold; cursor: pointer; border: none; }
+
+        .shop-card { background: white; border-radius: 12px; padding: 12px; margin-bottom: 10px; border: 1px solid #eee; display: flex; justify-content: space-between; align-items: center; cursor: pointer; }
+        .shop-type-tag { font-size: 11px; color: #d32f2f; font-weight: bold; background: #ffebee; padding: 4px 8px; border-radius: 12px; }
+
+        /* Featured items horizontal slider */
+        .featured-items-scroll { display: flex; gap: 10px; overflow-x: auto; padding-bottom: 5px; scrollbar-width: none; }
+        .featured-items-scroll::-webkit-scrollbar { display: none; }
+        .featured-item-box { background: #fafafa; border: 1px solid #eee; border-radius: 10px; padding: 8px; width: 110px; flex-shrink: 0; display: flex; flex-direction: column; justify-content: space-between; position: relative; }
+        .featured-item-img { width: 100%; height: 80px; object-fit: cover; border-radius: 8px; background: #f0f0f0; cursor: pointer; margin-bottom: 6px; }
+        .featured-item-title { font-size: 11px; font-weight: bold; color: #333; margin-bottom: 4px; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; height: 28px; line-height: 1.2; }
+        .featured-item-bottom { display: flex; justify-content: space-between; align-items: center; margin-top: 4px; }
+        .featured-item-price { font-size: 12px; font-weight: bold; color: #d32f2f; }
+        .mini-add-btn { background: #d32f2f; color: white; border: none; width: 24px; height: 24px; border-radius: 50%; font-size: 14px; cursor: pointer; display: flex; align-items: center; justify-content: center; font-weight: bold; }
 
         .shops-grid { display: grid; grid-template-columns: repeat(1, 1fr); gap: 12px; margin-bottom: 15px; }  
-        .shop-card { background: white; padding: 12px 15px; border-radius: 10px; box-shadow: 0 1px 3px rgba(0,0,0,0.08); cursor: pointer; display: flex; align-items: center; justify-content: space-between; border: 1px solid #eee; }  
-        .shop-card:hover { background: #fdf8f8; border-color: #d32f2f; }  
-        .shop-info-left { display: flex; align-items: center; gap: 12px; }  
-        .shop-logo { width: 50px; height: 50px; border-radius: 50%; object-fit: cover; background: #ffebee; flex-shrink: 0; display: flex; align-items: center; justify-content: center; font-size: 22px; color: #d32f2f; }  
-        .shop-type-tag { font-size: 10px; background: #ffebee; color: #d32f2f; padding: 3px 6px; border-radius: 4px; font-weight: bold; }  
 
         .cat-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin-bottom: 15px; }  
         .cat-card { background: white; border: 1px solid #eee; border-radius: 10px; padding: 12px 10px; text-align: center; cursor: pointer; box-shadow: 0 2px 4px rgba(0,0,0,0.04); }  
@@ -63,7 +128,7 @@
           
         .add-btn { background: #d32f2f; color: white; border: none; width: 30px; height: 30px; border-radius: 50%; font-size: 16px; cursor: pointer; display: flex; align-items: center; justify-content: center; font-weight: bold; flex-shrink: 0; }  
 
-        .modal { display: none; position: fixed; z-index: 2000; left: 0; top: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.7); align-items: center; justify-content: center; }  
+        .modal { display: none; position: fixed; z-index: 4000; left: 0; top: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.7); align-items: center; justify-content: center; }  
         #imageModal img { max-width: 90%; max-height: 80%; border-radius: 8px; box-shadow: 0 4px 10px rgba(0,0,0,0.3); }  
 
         .card { background: white; border-radius: 10px; padding: 14px; margin-bottom: 12px; box-shadow: 0 1px 3px rgba(0,0,0,0.08); font-size: 13px; border: 1px solid #eee; }  
@@ -85,15 +150,21 @@
     </style>
 </head>  
 <body>  
-<header>  
-    <span id="txt-header">大其力跑腿8888</span>  
-    <select class="lang-select" id="languageSelector" onchange="changeLanguage()">  
-        <option value="my">🇲🇲 မြန်မာ</option>  
-        <option value="zh">🇨🇳 中文</option>  
-        <option value="th">🇹🇭 ไทย</option>  
-        <option value="en">🇬🇧 English</option>  
-    </select>  
-</header>  
+
+<!-- MODERN STICKY LANGUAGE BAR -->
+<div class="fixed-lang-bar">  
+    <div class="lang-brand-title">🌐 大其力跑腿8888</div>
+    <div class="lang-select-wrapper">
+        <select class="lang-select" id="languageSelector" onchange="changeLanguage()">  
+            <option value="my" selected>🇲🇲 မြန်မာ</option>  
+            <option value="zh">🇨🇳 中文</option>  
+            <option value="th">🇹🇭 ไทย</option>  
+            <option value="en">🇬🇧 English</option>  
+        </select>  
+    </div>
+</div>  
+
+<div class="main-content-wrapper">
 
 <div id="imageModal" class="modal" onclick="closeImageModal()">  
     <span style="position: absolute; top: 20px; right: 30px; color: white; font-size: 35px; font-weight: bold; cursor: pointer;" onclick="closeImageModal()">&times;</span>  
@@ -127,12 +198,8 @@
 
 <!-- HOME TAB (INDEX 0) -->  
 <div id="sec-home" class="section active">  
-    <div class="location-box">  
-        <div>  
-            <span style="font-size: 11px; opacity: 0.9;" id="txt-loc-sub">Tachileik Delivery & Services</span><br>  
-            <b style="font-size: 14px;" id="txt-loc-name">📍 မယ်ဆိုင်၊ တာချီလိတ်သို့ 🇲🇲</b>  
-        </div>  
-        <div id="shop-status-badge" style="background: rgba(0,0,0,0.2); padding: 4px 8px; border-radius: 6px; font-size: 11px; font-weight: bold;">🟢 ဖွင့်ထားသည်</div>  
+    <div class="delivery-info-box">  
+        <span style="font-size: 12px; font-weight: bold;" id="txt-delivery-banner">🚀 24နာရီ ပို့ဆောင်ရေးဝန်ဆောင်မှု | Telegram နှင့် WeChat တို့မှလည်း တိုက်ရိုက်မှာကြားနိုင်ပါသည်</span>  
     </div>  
 
     <div class="bio-card">  
@@ -141,19 +208,11 @@
             <button class="admin-top-btn" onclick="openAdminPanelDirectly()">🔐 Admin Panel</button>  
         </div>  
         <div class="bio-sub">📍 缅甸大其力配送服务 🇲🇲</div>  
-        <div class="bio-list">  
-            🍔 美食外卖｜အဆင်သင့်စားစရာများဝယ်ယူပေး·ဆောင်ရွက်ပေး<br>  
-            🧋 饮料配送｜သောက်စရာများဝယ်ယူပေး·ဆောင်ရွက်ပေး<br>  
-            🛒 代购服务｜ဈေးဝယ်ပေးခြင်း<br>  
-            📦 快递配送｜ပါဆယ်မှန်သမျှဝယ်ယူပေး·ဆောင်ရွက်ပေး<br>  
-            📄 文件递送｜စာရွက်စာတမ်းမှန်သမျှဝယ်ယူပေး·ဆောင်ရွက်ပေး<br>  
-            🚗 接送服务｜ကြိုပေး·ပို့ဆောင်မှု<br>  
-            🏃 跑腿代办｜အထွေထွေအလုပ်ဆောင်ရွက်မှု  
+        <div class="bio-list" id="txt-bio-services">  
+            🍔 စားစရာ | 🧋 သောက်စရာ | 🛒 ဈေးဝယ် | 📦 ပါဆယ် | 📄 စာရွက်စာတမ်း | 🚗 ကြို/ပို့  
         </div>  
-        <div class="bio-footer">  
-            ⚡ 快速 · 安全 · 可靠<br>  
-            💬 欢迎下单，竭诚为您服务！<br>  
-            <b>大其力跑腿8888 — 您需要的，我们帮您送！</b>  
+        <div class="bio-footer" id="txt-bio-footer">  
+            ⚠️ မီနူးများ မပေါ်ပါက VPN ချိတ်ဆက်ပြီး စက္ကန့် ၃၀ ခန့် စောင့်ပေးပါရန်  
         </div>  
     </div>  
 
@@ -165,13 +224,11 @@
             <span>💚</span> <span id="txt-btn-wc-chat">WeChat ID ကူးရန်</span>  
         </button>  
     </div>  
-
-    <div class="search-bar">  
-        <span>🔍</span>  
-        <input type="text" id="txt-search-ph" placeholder="ဆိုင် သို့မဟုတ် မီနူး ရှာရန်" oninput="filterShops(this.value)" style="border:none; margin:0; padding:0;">  
-    </div>  
       
-    <h3 id="txt-shops-title" style="font-size: 15px; color: #d32f2f; margin-bottom: 10px;">🛍️ စားသောက်ဆိုင်များ</h3>  
+    <div class="section-header-title">
+        <h3 id="txt-shops-title">🛍️ စားသောက်ဆိုင်များ (လူကြိုက်များ & ဂျူစီမီနူးများ)</h3>  
+        <button class="see-all-btn" onclick="switchTab(1)" id="btn-see-all-shops">ဆိုင်အားလုံး ကြည့်ရန် →</button>
+    </div>
     <div class="shops-grid" id="shops-grid-container"></div>  
 </div>  
 
@@ -332,12 +389,12 @@
 
     <div class="card" style="background: #fff; border: 1px solid #d32f2f; margin-bottom: 15px;">  
         <b id="txt-add-new-shop">➕ ဆိုင်အသစ် ထည့်သွင်းရန်</b>  
-        <input type="text" id="new-shop-name" placeholder="ဆိုင်အမည် (ဥပမာ - KFC Tachileik)" style="margin-top:6px;">  
+        <input type="text" id="new-shop-name" placeholder="ဆိုင်အမည် (ဥပမာ - Happy Canteen)" style="margin-top:6px;">  
         <button class="btn" style="width: 100%; margin-top: 4px;" onclick="addNewShop()" id="btn-create-shop">ဆိုင်ဖန်တီးမည်</button>  
     </div>  
 
     <div class="card" style="margin-bottom: 15px;">  
-        <b id="txt-manage-shops-title">🛍️ ဆိုင်များ စီမံရန် (ဆိုင်ပိတ်ချိန် သတ်မှတ်ရန်)</b>  
+        <b id="txt-manage-shops-title">🛍️ ဆိုင်များ စီမံရန် (မီနူးများ ထည့်သွင်း/ပြင်ဆင်ရန်)</b>  
         <div id="admin-shops-list" style="margin-top: 8px;"></div>  
     </div>  
 </div>  
@@ -382,6 +439,8 @@
     <div class="nav-item" onclick="switchTab(3)" id="nav-3"><div>🛒</div><span id="lbl-cart">ခြင်းတောင်း</span></div>  
 </div>  
 
+</div> <!-- END main-content-wrapper -->
+
 <script>  
     const TELEGRAM_BOT_TOKEN = "8787623608:AAHYOBTkiR-TKlGX3eH-e8y8lq9DmCfnEHs";  
     const TELEGRAM_GROUP_ID = "-1004398841553";  
@@ -420,11 +479,11 @@
 
     const translations = {  
         my: {  
-            header: "大其力跑腿8888",  
-            locSub: "Tachileik Delivery & Services",  
-            locName: "📍 မယ်ဆိုင်၊ တာချီလိတ်သို့ 🇲🇲",  
-            searchPh: "ဆိုင် သို့မဟုတ် မီနူး ရှာရန်",  
-            shopsTitle: "🛍️ စားသောက်ဆိုင်များ",  
+            deliveryBanner: "🚀 24နာရီ ပို့ဆောင်ရေးဝန်ဆောင်မှု | Telegram နှင့် WeChat တို့မှလည်း တိုက်ရိုက်မှာကြားနိုင်ပါသည်",
+            bioServices: "🍔 စားစရာ | 🧋 သောက်စရာ | 🛒 ဈေးဝယ် | 📦 ပါဆယ် | 📄 စာရွက်စာတမ်း | 🚗 ကြို/ပို့",
+            bioFooter: "⚠️ မီနူးများ မပေါ်ပါက VPN ချိတ်ဆက်ပြီး စက္ကန့် ၃၀ ခန့် စောင့်ပေးပါရန်",
+            shopsTitle: "🛍️ စားသောက်ဆိုင်များ (လူကြိုက်များ & ဂျူစီမီနူးများ)",  
+            seeAllShops: "ဆိုင်အားလုံး ကြည့်ရန် →",
             btnBackHome: "← ဆိုင်စာရင်း",  
             catTitle: "🛍️ Shop Categories",  
             catSub: "Select a shop category you want to view -",  
@@ -447,6 +506,7 @@
             btnClearData: "🗑️ ဒေတာအအားလုံး ဖြတ်ရန်",  
             lblHome: "ပင်မ", lblCat: "ဆိုင်များ", lblOrder: "အော်ဒါ", lblCart: "ခြင်းတောင်း",  
             noShops: "ဆိုင်များ မရှိသေးပါခင်ဗျာ။ ဆိုင်အသစ်ထည့်ပါ သို့မဟုတ် Excel ဖိုင် ထည့်သွင်းပါ၊",  
+            noFeaturedItems: "လူကြိုက်များ/ကြော်ငြာ မီနူးဟင်းပွဲများ ရွေးချယ်ထားခြင်း မရှိသေးပါခင်ဗျာ။ (Admin Panel မှ မီနူးများကို Featured ရွေးပေးနိုင်ပါသည်)",
             noItemsInShop: "ဤဆိုင်တွင် မီနူးများ မရှိသေးပါခင်ဗျာ။",  
             emptyCart: "ခြင်းတောင်းတွင် ပစ္စည်းမရှိပါ။",  
             noOrders: "အော်ဒါမှတ်တမ်း မရှိသေးပါ။",  
@@ -466,15 +526,16 @@
             lblStatusTextHint: "ဖွင့်ပိတ် သို့မဟုတ် အသိပေးစာတမ်း (ဥပမာ - နံနက် ၈ နာရီ မှ ည ၁၀နာရီထိ):",  
             txtAddNewShop: "➕ ဆိုင်အသစ် ထည့်သွင်းရန်",  
             btnCreateShop: "ဆိုင်ဖန်တီးမည်",  
-            txtManageShopsTitle: "🛍️ ဆိုင်များ စီမံရန် (ဆိုင်ပိတ်ချိန် သတ်မှတ်ရန်)",
-            itemNotePh: "✏️ ဤဟင်းပွဲအတွက် မှာကြားလိုသည်များ (ဥပမာ- ငရုတ်သီးမထည့်ပါနှင့်)"
+            txtManageShopsTitle: "🛍️ ဆိုင်များ စီမံရန် (မီနူးများ ထည့်သွင်း/ပြင်ဆင်ရန်)",
+            itemNotePh: "✏️ ဤဟင်းပွဲအတွက် မှာကြားလိုသည်များ (ဥပမာ- ငရုတ်သီးမထည့်ပါနှင့်)",
+            viewMenuBtn: "ဆိုင်ကြည့်မည် →"
         },  
         zh: {  
-            header: "大其力跑腿8888",  
-            locSub: "Tachileik Delivery & Services",  
-            locName: "📍 缅甸大其力 🇲🇲",  
-            searchPh: "搜索商家或商品",  
-            shopsTitle: "🛍️ 餐厅列表",  
+            deliveryBanner: "🚀 24小时专业跑腿配送服务 | 也可直接通过 Telegram 或 WeChat 下单",
+            bioServices: "🍔 美食 | 🧋 饮品 | 🛒 代购 | 📦 快递 | 📄 文件 | 🚗 接送",
+            bioFooter: "⚠️ 如果菜单没有显示，请连接 VPN 翻墙后等待 30 秒",
+            shopsTitle: "🛍️ 热门精选菜品",  
+            seeAllShops: "查看所有商家 →",
             btnBackHome: "← 返回餐厅",  
             catTitle: "🛍️ 商家分类",  
             catSub: "请选择您要查看的商家分类 -",  
@@ -497,6 +558,7 @@
             btnClearData: "🗑️ 清空所有数据",  
             lblHome: "首页", lblCat: "商家", lblOrder: "订单", lblCart: "购物车",  
             noShops: "暂无餐厅，请添加餐厅或导入Excel文件。",  
+            noFeaturedItems: "暂未设置推荐菜品，请在后台勾选推荐菜品。",
             noItemsInShop: "该分类下暂无菜品。",  
             emptyCart: "购物车为空。",  
             noOrders: "暂无订单记录。",  
@@ -516,15 +578,16 @@
             lblStatusTextHint: "营业时间或提示语 (例如 - 08:00 AM - 10:00 PM):",  
             txtAddNewShop: "➕ 添加新店铺",  
             btnCreateShop: "创建店铺",  
-            txtManageShopsTitle: "🛍️ 管理店铺 (设置打烊时间)",
-            itemNotePh: "✏️ 备注此菜品要求 (例如: 不要辣/少辣)"
+            txtManageShopsTitle: "🛍️ 管理店铺 (编辑菜品与推荐)",
+            itemNotePh: "✏️ 备注此菜品要求 (例如: 不要辣/少辣)",
+            viewMenuBtn: "查看菜单 →"
         },  
         th: {  
-            header: "大其力跑腿8888",  
-            locSub: "Tachileik Delivery & Services",  
-            locName: "📍 ท่าขี้เหล็ก ประเทศเมียนมา 🇲🇲",  
-            searchPh: "ค้นหาร้านค้าหรือเมนู",  
-            shopsTitle: "🛍️ ร้านอาหาร",  
+            deliveryBanner: "🚀 บริการจัดส่ง 24 ชั่วโมง | สามารถสั่งซื้อผ่าน Telegram หรือ WeChat ได้โดยตรง",
+            bioServices: "🍔 อาหาร | 🧋 เครื่องดื่ม | 🛒 ฝากซื้อ | 📦 พัสดุ | 📄 เอกสาร | 🚗 รับส่ง",
+            bioFooter: "⚠️ หากเมนูไม่แสดง โปรดเชื่อมต่อ VPN แล้วรอ 30 วินาที",
+            shopsTitle: "🛍️ เมนูแนะนำยอดฮิต",  
+            seeAllShops: "ดูร้านค้าทั้งหมด →",
             btnBackHome: "← กลับร้านค้า",  
             catTitle: "🛍️ หมวดหมู่ร้านค้า",  
             catSub: "โปรดเลือกหมวดหมู่อย่างที่คุณต้องการดู -",  
@@ -547,6 +610,7 @@
             btnClearData: "🗑️ ล้างข้อมูลทั้งหมด",  
             lblHome: "หน้าแรก", lblCat: "ร้านค้า", lblOrder: "คำสั่งซื้อ", lblCart: "ตะกร้า",  
             noShops: "ยังไม่มีร้านค้า โปรดเพิ่มร้านค้าหรือนำเข้าไฟล์ Excel",  
+            noFeaturedItems: "ยังไม่มีรายการเมนูแนะนำ",
             noItemsInShop: "ยังไม่มีเมนูในหมวดหมู่นี้",  
             emptyCart: "ไม่มีสินค้าในตะกร้า",  
             noOrders: "ไม่มีประวัติคำสั่งซื้อ",  
@@ -566,15 +630,16 @@
             lblStatusTextHint: "เวลาเปิดปิด หรือ ข้อความแจ้งเตือน:",  
             txtAddNewShop: "➕ เพิ่มร้านค้าใหม่",  
             btnCreateShop: "สร้างร้านค้า",  
-            txtManageShopsTitle: "🛍️ จัดการร้านค้า (ตั้งเวลาปิด)",
-            itemNotePh: "✏️ หมายเหตุสำหรับเมนูนี้ (เช่น ไม่เผ็ด)"
+            txtManageShopsTitle: "🛍️ จัดการร้านค้า (แก้ไขเมนูและแนะนำ)",
+            itemNotePh: "✏️ หมายเหตุสำหรับเมนูนี้ (เช่น ไม่เผ็ด)",
+            viewMenuBtn: "ดูเมนู →"
         },  
         en: {  
-            header: "大其力跑腿8888",  
-            locSub: "Tachileik Delivery & Services",  
-            locName: "📍 Tachileik, Myanmar 🇲🇲",  
-            searchPh: "Search shop or food",  
-            shopsTitle: "🛍️ Restaurants",  
+            deliveryBanner: "🚀 24/7 Delivery Service | You can also order directly via Telegram or WeChat",
+            bioServices: "🍔 Food | 🧋 Drinks | 🛒 Shopping | 📦 Express | 📄 Documents | 🚗 Ride",
+            bioFooter: "⚠️ If menu does not appear, please connect VPN and wait 30 seconds",
+            shopsTitle: "🛍️ Featured & Popular Dishes",  
+            seeAllShops: "See All Shops →",
             btnBackHome: "← Back",  
             catTitle: "🛍️ Shop Categories",  
             catSub: "Select a shop category you want to view -",  
@@ -597,6 +662,7 @@
             btnClearData: "🗑️ Clear All Data",  
             lblHome: "Home", lblCat: "Shops", lblOrder: "Orders", lblCart: "Cart",  
             noShops: "No shops available. Add a shop or import an Excel file.",  
+            noFeaturedItems: "No featured items selected yet.",
             noItemsInShop: "No items in this category.",  
             emptyCart: "Your cart is empty.",  
             noOrders: "No order history.",  
@@ -616,36 +682,37 @@
             lblStatusTextHint: "Opening hours or notice text:",  
             txtAddNewShop: "➕ Add New Shop",  
             btnCreateShop: "Create Shop",  
-            txtManageShopsTitle: "🛍️ Manage Shops (Set Closing Time)",
-            itemNotePh: "✏️ Note for this item (e.g. No spicy)"
+            txtManageShopsTitle: "🛍️ Manage Shops (Edit Items & Featured)",
+            itemNotePh: "✏️ Note for this item (e.g. No spicy)",
+            viewMenuBtn: "View Menu →"
         }  
     };  
 
     const defaultDefaultMenu = [
         {
             id: 101,
-            shop: "功夫汉堡 Kungfu Burger",
+            shop: "Kungfu Burger 功夫汉堡",
             category: "food",
             titleMy: "ကွန်ဖူးဘာဂါ (Beef Burger)",
-            titleZh: "功夫汉堡",
+            titleZh: "功夫牛肉汉堡",
             titleTh: "กังฟูเบอร์เกอร์",
             titleEn: "Kungfu Burger",
             price: 50,
             description: "အသားထပ်:+15, ဒိန်ခဲ:+10",
-            image: ""
+            image: "",
+            isFeatured: true
         }
     ];
 
     const defaultShopNames = {
-        "功夫汉堡 Kungfu Burger": { my: "ကွန်ဖူးဘာဂါ", zh: "功夫汉堡 Kungfu Burger", th: "กังฟูเบอร์เกอร์", en: "Kungfu Burger" }
+        "Kungfu Burger 功夫汉堡": { my: "ကွန်ဖူးဘာဂါ", zh: "Kungfu Burger 功夫汉堡", th: "กังฟูเบอร์เกอร์", en: "Kungfu Burger" }
     };
 
     let db = { menu: [], shopNames: {}, shopLogos: {}, shopClosingTimes: {}, shopManualStatus: {}, cart: [], orders: [] };  
 
-    // 🔥 100% SAFE SYNC: Updated to v2 to bypass old browser cache
     function initFirebaseSync() {
         return new Promise((resolve) => {
-            database.ref('tachileik_delivery_v2').on('value', (snapshot) => {
+            database.ref('tachileik_delivery').on('value', (snapshot) => {
                 let val = snapshot.val();
                 if (val && val.menu) {
                     let rawMenu = val.menu;
@@ -669,14 +736,13 @@
         });
     }
 
-    // 🔥 100% SAFE SAVE: Updated to v2
     function saveDataAsync() {  
         if (!db.menu || db.menu.length === 0) {
             console.warn("Data မရှိသေးသောကြောင့် Cloud သို့ မသိမ်းပါ");
             return;
         }
 
-        database.ref('tachileik_delivery_v2').set({
+        database.ref('tachileik_delivery').set({
             menu: db.menu,
             shopNames: db.shopNames,
             shopLogos: db.shopLogos,
@@ -704,7 +770,6 @@
 
         checkAndAutoResetMorning();  
         cleanOldOrders();  
-        updateShopStatusDisplay();  
         
         await initFirebaseSync();  
     });  
@@ -870,7 +935,8 @@
         document.getElementById('category-shops-title').innerText = categoryTitle;  
 
         let container = document.getElementById('category-shops-container');  
-        let allShopsList = [...new Set(db.menu.map(m => m.shop))];  
+
+        let allShopsList = [...new Set([...Object.keys(db.shopNames), ...db.menu.map(m => m.shop)])];  
 
         let filteredShops = [];  
 
@@ -932,27 +998,12 @@
     function setShopStatus(status) {  
         shopStatus = status;  
         localStorage.setItem('tachileik_shop_status', status);  
-        updateShopStatusDisplay();  
         alert(status === 'open' ? 'ဆိုင်ဖွင့်အနေအထားသို့ ပြောင်းလဲပြီးပါပြီ။' : 'ဆိုင်ပိတ်အနေအထားသို့ ပြောင်းလဲပြီးပါပြီ။');  
     }  
 
     function saveShopStatusText(text) {  
         shopStatusText = text.trim();  
         localStorage.setItem('tachileik_shop_status_text', shopStatusText);  
-        updateShopStatusDisplay();  
-    }  
-
-    function updateShopStatusDisplay() {  
-        let badge = document.getElementById('shop-status-badge');  
-        if(shopStatus === 'open') {  
-            badge.style.background = '#4CAF50';  
-            badge.style.color = 'white';  
-            badge.innerText = shopStatusText ? `🟢 ဖွင့်သည် (${shopStatusText})` : '🟢 ဖွင့်သည် (Open)';  
-        } else {  
-            badge.style.background = '#f44336';  
-            badge.style.color = 'white';  
-            badge.innerText = shopStatusText ? `🔴 ပိတ်သည် (${shopStatusText})` : '🔴 ခေတ္တပိတ်သည် (Closed)';  
-        }  
     }  
 
     function clearAllData() {  
@@ -963,7 +1014,7 @@
             db.shopClosingTimes = {};  
             db.shopManualStatus = {};  
             db.orders = [];  
-            database.ref('tachileik_delivery_v2').remove();  
+            database.ref('tachileik_delivery').remove();  
             localStorage.clear();  
             renderAll();  
             alert('ဒေတာများ ဖြတ်ပြီးပါပြီ။');  
@@ -977,24 +1028,22 @@
             alert('ကျေးဇူးပြု၍ ဆိုင်အမည် ထည့်သွင်းပေးပါရန်။');  
             return;  
         }  
-        db.menu.push({  
-            id: Date.now() + Math.random(),  
-            shop: shopName,  
-            category: "food",  
-            titleMy: `${shopName} - ပထမဆုံးအသစ်`,  
-            titleZh: "",  
-            titleTh: "",  
-            titleEn: "",  
-            price: 0,  
-            description: "",  
-            image: ""  
-        });  
         db.shopNames[shopName] = { my: shopName, zh: '', th: '', en: '' };  
         saveDataAsync();  
         shopInput.value = '';  
         renderAll();  
-        alert(`"${shopName}" ဆိုင်ကို အောင်မြင်စွာ ဖန်တီးပြီးပါပြီ။`);  
+        alert(`"${shopName}" ဆိုင်ကို အောင်မြင်စွာ ဖန်တီးပြီးပါပြီ။ Admin Panel ၏ "ဆိုင်များ စီမံရန်" မှတဆင့် မီနူးများ ထည့်သွင်းနိုင်ပါပြီ။`);  
     }  
+
+    function toggleItemFeatured(itemId) {
+        let item = db.menu.find(m => m.id === itemId);
+        if (item) {
+            item.isFeatured = !item.isFeatured;
+            saveDataAsync();
+            renderShopEditModalItems();
+            renderShopsList();
+        }
+    }
 
     function addNewMenuItemDirectly() {  
         if (!editingShopName) {  
@@ -1026,7 +1075,8 @@
             titleEn: titleEn,  
             price: price,  
             description: description,  
-            image: image  
+            image: image,
+            isFeatured: false
         });  
 
         saveDataAsync();  
@@ -1104,7 +1154,7 @@
         let shopItems = db.menu.filter(m => m.shop === editingShopName);  
           
         if (shopItems.length === 0) {  
-            container.innerHTML = '<div style="color: #666; font-size: 12px; text-align: center; padding: 20px;">ဤဆိုင်တွင် မီနူးများ မရှိသေးပါခင်ဗျာ။</div>';  
+            container.innerHTML = '<div style="color: #666; font-size: 12px; text-align: center; padding: 20px;">ဤဆိုင်တွင် မီနူးများ မရှိသေးပါခင်ဗျာ။ အထက်ပါ form တွင် မီနူးများ ထည့်သွင်းနိုင်ပါသည်။</div>';  
             return;  
         }  
 
@@ -1114,6 +1164,8 @@
                 ? `<img src="${item.image}" style="width: 45px; height: 45px; object-fit: cover; border-radius: 6px; cursor:pointer;" onclick="openImageModal('${item.image}')">`   
                 : `<div style="width: 45px; height: 45px; background: #eee; border-radius: 6px; display: flex; align-items: center; justify-content: center; font-size: 10px; color: #888;">ပုံမရှိပါ</div>`;  
               
+            let isFeatured = !!item.isFeatured;
+
             html += `<div class="card" style="margin-bottom: 8px; padding: 8px; background: #fafafa; position: relative;">  
                 <button class="btn btn-danger" style="position: absolute; top: 6px; right: 6px; padding: 2px 6px; font-size: 10px;" onclick="deleteSingleMenuItem(${item.id})">🗑️ ဖြတ်မည်</button>  
                   
@@ -1135,7 +1187,7 @@
                 <div style="margin-bottom: 5px; font-size: 11px;">  
                     <div>Image URL: <input type="text" value="${item.image || ''}" placeholder="https://... ပုံလင့်ခ်ထည့်ရန်" style="margin:2px 0 0 0; padding:4px; font-size:11px;" onchange="updateItemImage(${item.id}, this.value)"></div>  
                 </div>  
-                <div style="display: flex; justify-content: space-between; align-items: center; gap: 5px;">  
+                <div style="display: flex; justify-content: space-between; align-items: center; gap: 5px; margin-bottom: 5px;">  
                     <div style="display: flex; align-items: center; gap: 2px; width: 100px;">  
                         <span style="font-size: 11px;">฿</span>  
                         <input type="number" value="${item.price}" placeholder="ဈေး" style="margin: 0; padding: 4px; font-size: 11px;" onchange="updateItemPrice(${item.id}, this.value)">  
@@ -1145,6 +1197,12 @@
                         <input type="file" accept="image/*" style="width: 130px; font-size: 10px;" onchange="uploadSingleImage(event, ${item.id})">  
                     </div>  
                 </div>  
+                <div style="border-top: 1px dashed #ddd; padding-top: 4px; display: flex; justify-content: space-between; align-items: center;">
+                    <span style="font-size: 10px; color: #555;">အရှေ့ ပင်မစာမျက်နှာတွင် ပြရန်:</span>
+                    <button class="btn" style="padding: 2px 6px; font-size: 10px; background: ${isFeatured ? '#e65100' : '#757575'};" onclick="toggleItemFeatured(${item.id})">
+                        ${isFeatured ? '⭐ Featured (အရှေ့တွင်ပြမည်)' : '⚪ Featured မပြပါ'}
+                    </button>
+                </div>
             </div>`;  
         });  
         container.innerHTML = html;  
@@ -1152,7 +1210,7 @@
 
     function renderAdminShops() {  
         let container = document.getElementById('admin-shops-list');  
-        let shops = [...new Set(db.menu.map(m => m.shop))];  
+        let shops = [...new Set([...Object.keys(db.shopNames), ...db.menu.map(m => m.shop)])];  
         if (shops.length === 0) {  
             container.innerHTML = '<div style="color: #666; font-size: 12px;">ဆိုင်များ မရှိသေးပါ</div>';  
             return;  
@@ -1291,11 +1349,18 @@
         currentLang = document.getElementById('languageSelector').value;  
         let t = translations[currentLang] || translations.my;  
           
-        document.getElementById('txt-header').innerText = t.header;  
-        document.getElementById('txt-loc-sub').innerText = t.locSub;  
-        document.getElementById('txt-loc-name').innerText = t.locName;  
-        document.getElementById('txt-search-ph').placeholder = t.searchPh;  
+        if (document.getElementById('txt-delivery-banner')) {  
+            document.getElementById('txt-delivery-banner').innerText = t.deliveryBanner;  
+        }  
+        if (document.getElementById('txt-bio-services')) {  
+            document.getElementById('txt-bio-services').innerText = t.bioServices;  
+        }  
+        if (document.getElementById('txt-bio-footer')) {  
+            document.getElementById('txt-bio-footer').innerText = t.bioFooter;  
+        }  
+
         document.getElementById('txt-shops-title').innerText = t.shopsTitle;  
+        document.getElementById('btn-see-all-shops').innerText = t.seeAllShops;  
         document.getElementById('btn-back-home').innerText = t.btnBackHome;  
         document.getElementById('txt-cat-title').innerText = t.catTitle;  
         document.getElementById('txt-cat-sub').innerText = t.catSub;  
@@ -1643,36 +1708,74 @@
         renderAdminAllOrders();  
     }  
 
-    function renderShopsList(filter = '') {  
+    function renderShopsList() {  
         let t = translations[currentLang] || translations.my;  
-        let shops = [...new Set(db.menu.map(m => m.shop))];  
+        
+        // Filter featured items selected in menu
+        let featuredItems = db.menu.filter(m => !!m.isFeatured);
+        
+        // Group featured items by shop
+        let shopFeaturedMap = {};
+        featuredItems.forEach(item => {
+            if (!shopFeaturedMap[item.shop]) {
+                shopFeaturedMap[item.shop] = [];
+            }
+            shopFeaturedMap[item.shop].push(item);
+        });
+
+        let featuredShops = Object.keys(shopFeaturedMap);
+        
         let html = '';  
-        if (shops.length === 0) {  
-            html = `<div style="color: #666; font-size: 13px; text-align: center; padding: 20px;">${t.noShops}</div>`;  
+        if (featuredShops.length === 0) {  
+            html = `<div style="color: #666; font-size: 12px; text-align: center; padding: 20px; background: white; border-radius: 10px;">${t.noFeaturedItems}</div>`;  
         } else {  
-            shops.forEach(shop => {  
+            featuredShops.forEach(shop => {  
                 let displayShopName = getShopDisplayTitle(shop);  
-                if (filter && !displayShopName.toLowerCase().includes(filter.toLowerCase()) && !shop.toLowerCase().includes(filter.toLowerCase())) return;  
+                
                 let logoImg = db.shopLogos[shop] ? `<img src="${db.shopLogos[shop]}" class="shop-logo">` : `<div class="shop-logo">🛍️</div>`;  
                 let closed = isShopClosed(shop);  
-                let badgeTag = closed ? `<span style="font-size: 10px; background: #ffebee; color: #f44336; padding: 3px 6px; border-radius: 4px; font-weight: bold;">🔴 ပိတ်သည်</span>` : `<span class="shop-type-tag">ဆိုင်ကြည့်မည် →</span>`;  
+                
+                let shopItems = shopFeaturedMap[shop]; 
+                let featuredItemsHtml = '';
+                
+                shopItems.forEach(item => {
+                    let itemImg = item.image ? `<img src="${item.image}" class="featured-item-img" onclick="openImageModal('${item.image}')">` : `<div class="featured-item-img" style="display:flex; align-items:center; justify-content:center; font-size:18px;">🍲</div>`;
+                    let itemTitle = getItemTitle(item);
+                    featuredItemsHtml += `
+                        <div class="featured-item-box">
+                            <div>
+                                ${itemImg}
+                                <div class="featured-item-title">${itemTitle}</div>
+                            </div>
+                            <div class="featured-item-bottom">
+                                <span class="featured-item-price">฿${item.price}</span>
+                                <button class="mini-add-btn" onclick="handleAddToCartClick(${item.id})">+</button>
+                            </div>
+                        </div>
+                    `;
+                });
 
-                html += `<div class="shop-card" onclick="openShopMenu('${shop}')">  
-                    <div class="shop-info-left">  
-                        ${logoImg}  
-                        <div>  
-                            <div style="font-size: 14px; font-weight: bold; color: #333;">${displayShopName}</div>  
-                            ${closed ? '<span style="font-size:11px; color:#f44336;">(အချိန်အခါတွင် ပိတ်ထားသည်)</span>' : ''}  
-                        </div>  
-                    </div>  
-                    ${badgeTag}  
-                </div>`;  
+                html += `
+                    <div class="shop-showcase-card">
+                        <div class="shop-header-row">
+                            <div class="shop-info-left" onclick="openShopMenu('${shop}')" style="cursor:pointer;">  
+                                ${logoImg}  
+                                <div>  
+                                    <div class="shop-name-txt">${displayShopName}</div>  
+                                    ${closed ? '<span style="font-size:11px; color:#f44336;">(ပိတ်ထားသည်)</span>' : '<span style="font-size:11px; color:#4CAF50;">🟢 ဖွင့်ထားသည်</span>'}  
+                                </div>  
+                            </div>  
+                            <button class="view-menu-link" onclick="openShopMenu('${shop}')">${t.viewMenuBtn}</button>
+                        </div>
+                        <div class="featured-items-scroll">
+                            ${featuredItemsHtml}
+                        </div>
+                    </div>
+                `;  
             });  
         }  
         document.getElementById('shops-grid-container').innerHTML = html;  
     }  
-
-    function filterShops(val) { renderShopsList(val); }  
 
     function changeQty(index, delta) {  
         db.cart[index].qty += delta;  
@@ -1876,7 +1979,6 @@
         container1.innerHTML = html;  
     }  
 
-    // 🔥 SAFE MERGE & APPEND EXCEL IMPORT LOGIC
     function handleExcelImport(event) {  
         let file = event.target.files[0];  
         if (!file) return;  
@@ -1921,7 +2023,8 @@
                             titleEn: titleEn,  
                             price: price,  
                             description: description,  
-                            image: image   
+                            image: image,
+                            isFeatured: false 
                         });  
 
                         if (!newShopNames[shop]) {
