@@ -88,7 +88,9 @@
 
         .menu-container { display: flex; height: calc(100vh - 130px); background: #fff; overflow: hidden; }  
         .categories-sidebar { width: 120px; background: #f8f9fa; overflow-y: auto; border-right: 1px solid #eee; flex-shrink: 0; position: sticky; top: 0; }  
-        .cat-item { padding: 18px 10px; font-size: 13px; color: #666; cursor: pointer; text-align: center; border-left: 3px solid transparent; }  
+        .cat-item { padding: 12px 6px; font-size: 11px; color: #666; cursor: pointer; text-align: center; border-left: 3px solid transparent; word-break: break-word; }  
+        .cat-item.sub-item { padding-left: 14px; font-size: 10px; color: #555; background: #fdfdfd; text-align: left; }
+        .cat-item.main-group-header { font-weight: bold; color: #d32f2f; background: #ffebee; cursor: pointer; text-align: center; border-bottom: 1px solid #ffcdd2; font-size: 12px; }
         .cat-item.active { background: #fff; color: #d32f2f; font-weight: bold; border-left-color: #d32f2f; }  
           
         .menu-items-area { flex-grow: 1; overflow-y: auto; padding: 10px; background: #fff; scroll-behavior: smooth; }  
@@ -158,10 +160,10 @@
 
         <div style="margin-top: 15px; border-top: 1px solid #eee; padding-top: 12px; display: flex; justify-content: space-between; align-items: center;">
             <div>
-                <span style="font-size: 11px; color: #666;">ကျသင့်ငွေ:</span><br>
+                <span style="font-size: 11px; color: #666;" id="lbl-modal-total">ကျသင့်ငွေ:</span><br>
                 <b id="modal-calculated-total" style="font-size: 16px; color: #d32f2f;">฿0</b>
             </div>
-            <button class="btn" style="padding: 10px 18px; border-radius: 20px;" onclick="confirmAddToCartWithToppings()">ခြင်းတောင်းထဲထည့်မည်</button>  
+            <button class="btn" style="padding: 10px 18px; border-radius: 20px;" onclick="confirmAddToCartWithToppings()" id="btn-modal-add">ခြင်းတောင်းထဲထည့်မည်</button>  
         </div>
     </div>  
 </div>  
@@ -169,13 +171,13 @@
 <div id="renameShopModal" class="modal">  
     <div class="card" style="width: 85%; max-width: 350px; padding: 20px; position: relative;">  
         <span style="position: absolute; top: 10px; right: 15px; font-size: 22px; cursor: pointer; font-weight: bold;" onclick="closeRenameShopModal()">&times;</span>  
-        <h3 style="color: #d32f2f; margin-top: 0; margin-bottom: 10px;">✏️ ဆိုင်နာမည် ပြောင်းရန် (ဘာသာ၄မျိုး)</h3>  
-        <div style="font-size:11px; color:#666; margin-bottom:8px;">ဘာသာစကားအလိုက် ဆိုင်နာမည်များကို ရေးသားပေးပါ -</div>  
+        <h3 style="color: #d32f2f; margin-top: 0; margin-bottom: 10px;" id="txt-rename-title">✏️ ဆိုင်နာမည် ပြောင်းရန် (ဘာသာ၄မျိုး)</h3>  
+        <div style="font-size:11px; color:#666; margin-bottom:8px;" id="txt-rename-sub">ဘာသာစကားအလိုက် ဆိုင်နာမည်များကို ရေးသားပေးပါ -</div>  
         <input type="text" id="rename-shop-my" placeholder="မြန်မာအမည်">  
         <input type="text" id="rename-shop-zh" placeholder="中文名称">  
         <input type="text" id="rename-shop-th" placeholder="ชื่อภาษาไทย">  
         <input type="text" id="rename-shop-en" placeholder="English Name">  
-        <button class="btn" style="width: 100%; background: #2196F3;" onclick="saveRenamedShop()">သိမ်းဆည်းမည်</button>  
+        <button class="btn" style="width: 100%; background: #2196F3;" onclick="saveRenamedShop()" id="btn-save-rename">သိမ်းဆည်းမည်</button>  
     </div>  
 </div>  
 
@@ -187,7 +189,7 @@
     <div class="bio-card">  
         <div class="bio-header-flex">  
             <div class="bio-title">🛵 大其力跑腿8888</div>  
-            <button class="admin-top-btn" onclick="openAdminPanelDirectly()">🔐 Admin Panel</button>  
+            <button class="admin-top-btn" onclick="openAdminPanelDirectly()" id="btn-admin-panel">🔐 Admin Panel</button>  
         </div>  
         <div class="bio-sub">📍 缅甸大其力配送服务 🇲🇲</div>  
         <div class="bio-list" id="txt-bio-services">  
@@ -221,50 +223,54 @@
     <div class="cat-grid">  
         <div class="cat-card" id="ccard-all" onclick="openCategoryShops('all', 'ဆိုင်အများစု (All Shops)')">  
             <div class="cat-icon">🏬</div>  
-            <div class="cat-name"><span id="cname-all">All Shops</span><br><span style="font-size:10px; color:#888;">ဆိုင်အများစု</span></div>  
+            <div class="cat-name"><span id="cname-all">All Shops</span><br><span style="font-size:10px; color:#888;" id="csub-all">ဆိုင်အများစု</span></div>  
         </div>  
         <div class="cat-card" id="ccard-noodles" onclick="openCategoryShops('noodles', 'ခေါက်ဆွဲဆိုင်များ (Noodle Shops)')">  
             <div class="cat-icon">🍜</div>  
-            <div class="cat-name"><span id="cname-noodles">Noodle Shops</span><br><span style="font-size:10px; color:#888;">ခေါက်ဆွဲဆိုင်များ</span></div>  
+            <div class="cat-name"><span id="cname-noodles">Noodle Shops</span><br><span style="font-size:10px; color:#888;" id="csub-noodles">ခေါက်ဆွဲဆိုင်များ</span></div>  
+        </div>  
+        <div class="cat-card" id="ccard-pounded" onclick="openCategoryShops('pounded', 'အထောင်းဆိုင်များ (Pounded / Somtum Shops)')">  
+            <div class="cat-icon">🥗</div>  
+            <div class="cat-name"><span id="cname-pounded">Pounded Shops</span><br><span style="font-size:10px; color:#888;" id="csub-pounded">အထောင်းဆိုင်များ</span></div>  
         </div>  
         <div class="cat-card" id="ccard-cake" onclick="openCategoryShops('cake', 'ကိတ် & မုန့်ဆိုင်များ (Bakery & Cake)')">  
             <div class="cat-icon">🎂</div>  
-            <div class="cat-name"><span id="cname-cake">Bakery & Cake</span><br><span style="font-size:10px; color:#888;">ကိတ် & မုန့်ဆိုင်များ</span></div>  
+            <div class="cat-name"><span id="cname-cake">Bakery & Cake</span><br><span style="font-size:10px; color:#888;" id="csub-cake">ကိတ် & မုန့်ဆိုင်များ</span></div>  
         </div>  
         <div class="cat-card" id="ccard-breakfast" onclick="openCategoryShops('breakfast', 'မနက်စာဆိုင်များ (Breakfast)')">  
             <div class="cat-icon">🍳</div>  
-            <div class="cat-name"><span id="cname-bf">Breakfast</span><br><span style="font-size:10px; color:#888;">မနက်စာဆိုင်များ</span></div>  
+            <div class="cat-name"><span id="cname-bf">Breakfast</span><br><span style="font-size:10px; color:#888;" id="csub-bf">မနက်စာဆိုင်များ</span></div>  
         </div>  
         <div class="cat-card" id="ccard-restaurant" onclick="openCategoryShops('restaurant', 'စားသောက်ဆိုင်ကြီးများ (Restaurants)')">  
             <div class="cat-icon">🍽️</div>  
-            <div class="cat-name"><span id="cname-res">Restaurants</span><br><span style="font-size:10px; color:#888;">စားသောက်ဆိုင်ကြီးများ</span></div>  
+            <div class="cat-name"><span id="cname-res">Restaurants</span><br><span style="font-size:10px; color:#888;" id="csub-res">စားသောက်ဆိုင်ကြီးများ</span></div>  
         </div>  
         <div class="cat-card" id="ccard-bbq" onclick="openCategoryShops('bbq', 'အကင် & အသုပ်ဆိုင်များ (BBQ & Salad)')">  
             <div class="cat-icon">🍢</div>  
-            <div class="cat-name"><span id="cname-bbq">BBQ & Salad</span><br><span style="font-size:10px; color:#888;">အကင် & အသုပ်ဆိုင်များ</span></div>  
+            <div class="cat-name"><span id="cname-bbq">BBQ & Salad</span><br><span style="font-size:10px; color:#888;" id="csub-bbq">အကင် & အသုပ်ဆိုင်များ</span></div>  
         </div>  
         <div class="cat-card" id="ccard-drink" onclick="openCategoryShops('drink', 'ဖျော်ရည် & မုန့်ဆိုင်များ (Drinks & Desserts)')">  
             <div class="cat-icon">🧋</div>  
-            <div class="cat-name"><span id="cname-drink">Drinks & Desserts</span><br><span style="font-size:10px; color:#888;">ဖျော်ရည် & မုန့်ဆိုင်များ</span></div>  
+            <div class="cat-name"><span id="cname-drink">Drinks & Desserts</span><br><span style="font-size:10px; color:#888;" id="csub-drink">ဖျော်ရည် & မုန့်ဆိုင်များ</span></div>  
         </div>  
         <div class="cat-card" id="ccard-tobacco_alcohol" onclick="openCategoryShops('tobacco_alcohol', 'ဆေးလိပ်နှင့်အရက် (Cigarette & Alcohol)')">  
             <div class="cat-icon">🚬🍷</div>  
-            <div class="cat-name"><span id="cname-tobacco">Cigarette & Alcohol</span><br><span style="font-size:10px; color:#888;">ဆေးလိပ်နှင့်အရက်</span></div>  
+            <div class="cat-name"><span id="cname-tobacco">Cigarette & Alcohol</span><br><span style="font-size:10px; color:#888;" id="csub-tobacco">ဆေးလိပ်နှင့်အရက်</span></div>  
         </div>  
         <div class="cat-card" id="ccard-night_market" onclick="openCategoryShops('night_market', 'ညဈေး (Night Market)')">  
             <div class="cat-icon">🌙</div>  
-            <div class="cat-name"><span id="cname-night">Night Market</span><br><span style="font-size:10px; color:#888;">ညဈေး</span></div>  
+            <div class="cat-name"><span id="cname-night">Night Market</span><br><span style="font-size:10px; color:#888;" id="csub-night">ညဈေး</span></div>  
         </div>  
         <div class="cat-card" id="ccard-others" onclick="openCategoryShops('others', 'အခြား (Others)')">  
             <div class="cat-icon">📦</div>  
-            <div class="cat-name"><span id="cname-others">Others</span><br><span style="font-size:10px; color:#888;">အခြား</span></div>  
+            <div class="cat-name"><span id="cname-others">Others</span><br><span style="font-size:10px; color:#888;" id="csub-others">အခြား</span></div>  
         </div>  
     </div>  
 </div>  
 
 <div id="sec-category-shops" class="section">  
     <div style="background: white; padding: 10px 15px; border-bottom: 1px solid #eee; display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px;">  
-        <button class="btn" style="background:#666; padding: 5px 10px;" onclick="switchTab(1)">← အမျိုးအစားများသို့</button>  
+        <button class="btn" style="background:#666; padding: 5px 10px;" onclick="switchTab(1)" id="btn-back-to-cats">← အမျိုးအစားများသို့</button>  
         <h3 id="category-shops-title" style="color: #d32f2f; margin: 0; font-size: 15px;">ဆိုင်များ</h3>  
         <div></div>  
     </div>  
@@ -339,8 +345,8 @@
             <span style="font-size: 11px; opacity:0.9;" id="txt-profile-sub">大其力跑腿8888 စီမံခန့်ခွဲသူ နေရာ</span>  
         </div>  
         <div style="display:flex; gap:6px;">  
-            <button class="btn" style="background: #2196F3; font-size: 11px; padding: 6px 10px;" onclick="switchTab(0)">👀 Customer View</button>  
-            <button class="btn" style="background: rgba(0,0,0,0.3); font-size: 11px; padding: 6px 10px;" onclick="adminLogout()">Logout</button>  
+            <button class="btn" style="background: #2196F3; font-size: 11px; padding: 6px 10px;" onclick="switchTab(0)" id="btn-customer-view">👀 Customer View</button>  
+            <button class="btn" style="background: rgba(0,0,0,0.3); font-size: 11px; padding: 6px 10px;" onclick="adminLogout()" id="btn-admin-logout">Logout</button>  
         </div>  
     </div>  
 
@@ -352,8 +358,8 @@
     </div>  
 
     <div class="card" style="background: #fff8f8; border: 1px solid #d32f2f; margin-bottom: 15px;">  
-        <b style="color: #d32f2f; font-size: 14px;">📦 Customer များမှ လာသော အော်ဒါအအားလုံး စီမံရန်</b>  
-        <p style="font-size: 11px; color: #666; margin-top: 2px;">ရွေးချယ်ရောက်လာသော အော်ဒါများ၏ အခြေအနေ (Status) ကို ပြောင်းလဲပေးနိုင်ပါသည် -</p>  
+        <b style="color: #d32f2f; font-size: 14px;" id="txt-admin-orders-title">📦 Customer များမှ လာသော အော်ဒါအအားလုံး စီမံရန်</b>  
+        <p style="font-size: 11px; color: #666; margin-top: 2px;" id="txt-admin-orders-sub">ရွေးချယ်ရောက်လာသော အော်ဒါများ၏ အခြေအနေ (Status) ကို ပြောင်းလဲပေးနိုင်ပါသည် -</p>  
         <div id="admin-all-orders-list" style="margin-top: 10px;"></div>  
     </div>  
 
@@ -385,7 +391,7 @@
         <h3 id="edit-modal-title" style="color: #d32f2f; margin-top: 0; margin-bottom: 10px;">ဆိုင် မီနူးများ ပြောင်းလဲရန်</h3>  
           
         <div class="card" style="background: #e8f5e9; border: 1px solid #4CAF50; margin-bottom: 15px; padding: 10px;">  
-            <b style="color: #2e7d32; font-size: 13px;">➕ မီနူးအသစ် ထည့်ရန်</b>  
+            <b style="color: #2e7d32; font-size: 13px;" id="txt-add-menu-title">➕ မီနူးအသစ် ထည့်ရန်</b>  
             <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 4px; margin-top: 4px;">  
                 <input type="text" id="new-item-my" placeholder="မြန်မာအမည်" style="margin:2px 0; padding:5px; font-size:11px;">  
                 <input type="text" id="new-item-zh" placeholder="中文" style="margin:2px 0; padding:5px; font-size:11px;">  
@@ -395,16 +401,12 @@
                 <input type="text" id="new-item-en" placeholder="English" style="margin:2px 0; padding:5px; font-size:11px;">  
             </div>  
             <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 4px;">  
-                <select id="new-item-cat" style="margin:2px 0; padding:5px; font-size:11px;">  
-                    <option value="food">စားစရာများ (Food)</option>  
-                    <option value="dessert">အချိုပွဲ (Dessert)</option>  
-                    <option value="drinks">သောက်စရာများ (Drinks)</option>  
-                </select>  
+                <input type="text" id="new-item-cat" placeholder="အမျိုးအစား (ဥပမာ- ထမင်းကြော်၊ ခေါက်ဆွဲ၊ ကော်ဖီ၊ အအေး)" style="margin:2px 0; padding:5px; font-size:11px;">  
                 <input type="number" id="new-item-price" placeholder="ဈေးနှုန်း (฿)" style="margin:2px 0; padding:5px; font-size:11px;">  
             </div>  
             <input type="text" id="new-item-desc" placeholder="အသားရွေး:[ဝက်,ကြက်,နွား:+11,ပင်လယ်စာ:+11]" style="margin:2px 0; padding:5px; font-size:11px;">  
             <input type="text" id="new-item-img" placeholder="Image URL (ပုံလင့်ခ် ထည့်ရန်)" style="margin:2px 0; padding:5px; font-size:11px;">  
-            <button class="btn" style="background: #2e7d32; width: 100%; margin-top: 5px; padding: 6px; font-size: 12px;" onclick="addNewMenuItemDirectly()">➕ မီနူးအသစ် ထည့်မည်</button>  
+            <button class="btn" style="background: #2e7d32; width: 100%; margin-top: 5px; padding: 6px; font-size: 12px;" onclick="addNewMenuItemDirectly()" id="btn-add-menu-confirm">➕ မီနူးအသစ် ထည့်မည်</button>  
         </div>  
 
         <div id="shop-edit-modal-items-list"></div>  
@@ -439,14 +441,7 @@
 
     let currentLang = 'my';  
     let activeShopName = '';  
-      
-    const categoryDict = {  
-        food: { my: "စားစရာများ", zh: "美食/菜品", th: "อาหาร", en: "Food" },  
-        dessert: { my: "အချိုပွဲ", zh: "甜品/糕点", th: "ขนมหวาน", en: "Dessert" },  
-        drinks: { my: "သောက်စရာများ", zh: "饮料/饮品", th: "เครื่องดื่ม", en: "Drinks" }  
-    };  
-
-    let activeCategoryKey = 'food';  
+    let activeCategoryKey = '';  
     let editingShopName = '';  
     let targetRenameShopKey = '';  
     
@@ -465,18 +460,20 @@
             shopsTitle: "🛍️ စားသောက်ဆိုင်များ (လူကြိုက်များ & ဂျူစီမီနူးများ)",  
             seeAllShops: "ဆိုင်အားလုံး ကြည့်ရန် →",
             btnBackHome: "← ဆိုင်စာရင်း",  
+            btnBackCats: "← အမျိုးအစားများသို့",
             catTitle: "🛍️ Shop Categories",  
             catSub: "Select a shop category you want to view -",  
-            cnameAll: "All Shops",  
-            cnameNoodles: "Noodle Shops",  
-            cnameCake: "Bakery & Cake",
-            cnameBf: "Breakfast",  
-            cnameRes: "Restaurants",  
-            cnameBbq: "BBQ & Salad",  
-            cnameDrink: "Drinks & Desserts",  
-            cnameTobacco: "Cigarette & Alcohol",  
-            cnameNight: "Night Market",  
-            cnameOthers: "Others",  
+            cnameAll: "All Shops", csubAll: "ဆိုင်အများစု",
+            cnameNoodles: "Noodle Shops", csubNoodles: "ခေါက်ဆွဲဆိုင်များ",
+            cnamePounded: "Pounded Shops", csubPounded: "အထောင်းဆိုင်များ",
+            cnameCake: "Bakery & Cake", csubCake: "ကိတ် & မုန့်ဆိုင်များ",
+            cnameBf: "Breakfast", csubBf: "မနက်စာဆိုင်များ",  
+            cnameRes: "Restaurants", csubRes: "စားသောက်ဆိုင်ကြီးများ",  
+            cnameBbq: "BBQ & Salad", csubBbq: "အကင် & အသုပ်ဆိုင်များ",  
+            cnameDrink: "Drinks & Desserts", csubDrink: "ဖျော်ရည် & မုန့်ဆိုင်များ",  
+            cnameTobacco: "Cigarette & Alcohol", csubTobacco: "ဆေးလိပ်နှင့်အရက်",  
+            cnameNight: "Night Market", csubNight: "ညဈေး",  
+            cnameOthers: "Others", csubOthers: "အခြား",  
             sec3Title: "အော်ဒါမှတ်တမ်းများ",  
             sec3Sub: "⏰ မှာယူထားသော အော်ဒါများကို ပြသပေးထားပါသည်။",  
             sec4Title: "ခြင်းတောင်း (Cart)",  
@@ -509,7 +506,19 @@
             btnCreateShop: "ဆိုင်ဖန်တီးမည်",  
             txtManageShopsTitle: "🛍️ ဆိုင်များ စီမံရန် (မီနူးများ ထည့်သွင်း/ပြင်ဆင်ရန်)",
             itemNotePh: "✏️ ဤဟင်းပွဲအတွက် မှာကြားလိုသည်များ (ဥပမာ- ငရုတ်သီးမထည့်ပါနှင့်)",
-            viewMenuBtn: "ဆိုင်ကြည့်မည် →"
+            viewMenuBtn: "ဆိုင်ကြည့်မည် →",
+            addedToCartMsg: '"{title}" ကို ခြင်းတောင်းထဲ ထည့်ပြီးပါပြီ။',
+            adminPanelBtn: "🔐 Admin Panel",
+            renameTitle: "✏️ ဆိုင်နာမည် ပြောင်းရန် (ဘာသာ၄မျိုး)",
+            renameSub: "ဘာသာစကားအလိုက် ဆိုင်နာမည်များကို ရေးသားပေးပါ -",
+            saveRenameBtn: "သိမ်းဆည်းမည်",
+            lblModalTotal: "ကျသင့်ငွေ:",
+            btnModalAdd: "ခြင်းတောင်းထဲထည့်မည်",
+            customerViewBtn: "👀 Customer View",
+            adminOrdersTitle: "📦 Customer များမှ လာသော အော်ဒါအအားလုံး စီမံရန်",
+            adminOrdersSub: "ရွေးချယ်ရောက်လာသော အော်ဒါများ၏ အခြေအနေ (Status) ကို ပြောင်းလဲပေးနိုင်ပါသည် -",
+            addMenuTitle: "➕ မီနူးအသစ် ထည့်ရန်",
+            addMenuConfirmBtn: "➕ မီနူးအသစ် ထည့်မည်"
         },  
         zh: {  
             deliveryBanner: "🚀 24小时专业跑腿配送服务 | 也可直接通过 Telegram 或 WeChat 下单",
@@ -518,18 +527,20 @@
             shopsTitle: "🛍️ 热门精选菜品",  
             seeAllShops: "查看所有商家 →",
             btnBackHome: "← 返回餐厅",  
+            btnBackCats: "← 返回分类",
             catTitle: "🛍️ 商家分类",  
             catSub: "请选择您要查看的商家分类 -",  
-            cnameAll: "所有商家",  
-            cnameNoodles: "面条/粉店",  
-            cnameCake: "蛋糕烘焙店",
-            cnameBf: "早餐店",  
-            cnameRes: "大餐厅",  
-            cnameBbq: "烧烤凉拌店",  
-            cnameDrink: "饮品甜品店",  
-            cnameTobacco: "香烟与美酒",  
-            cnameNight: "夜市",  
-            cnameOthers: "其他服务",  
+            cnameAll: "All Shops", csubAll: "所有商家",
+            cnameNoodles: "Noodle Shops", csubNoodles: "面条/粉店",
+            cnamePounded: "Pounded Shops", csubPounded: "舂捣/凉拌店",
+            cnameCake: "Bakery & Cake", csubCake: "蛋糕烘焙店",
+            cnameBf: "Breakfast", csubBf: "早餐店",  
+            cnameRes: "Restaurants", csubRes: "大餐厅",  
+            cnameBbq: "BBQ & Salad", csubBbq: "烧烤凉拌店",  
+            cnameDrink: "Drinks & Desserts", csubDrink: "饮品甜品店",  
+            cnameTobacco: "Cigarette & Alcohol", csubTobacco: "香烟与美酒",  
+            cnameNight: "Night Market", csubNight: "夜市",  
+            cnameOthers: "Others", csubOthers: "其他服务",  
             sec3Title: "我的订单",  
             sec3Sub: "⏰ 显示您的个人订单记录",  
             sec4Title: "购物车",  
@@ -562,7 +573,19 @@
             btnCreateShop: "创建店铺",  
             txtManageShopsTitle: "🛍️ 管理店铺 (编辑菜品与推荐)",
             itemNotePh: "✏️ 备注此菜品要求 (例如: 不要辣/少辣)",
-            viewMenuBtn: "查看菜单 →"
+            viewMenuBtn: "查看菜单 →",
+            addedToCartMsg: '"{title}" 已添加到购物车。',
+            adminPanelBtn: "🔐 管理后台",
+            renameTitle: "✏️ 修改店铺名称 (四国语言)",
+            renameSub: "请填写各语言对应的店铺名称 -",
+            saveRenameBtn: "保存",
+            lblModalTotal: "合计:",
+            btnModalAdd: "加入购物车",
+            customerViewBtn: "👀 客户视图",
+            adminOrdersTitle: "📦 管理客户所有订单",
+            adminOrdersSub: "您可以更改订单的处理状态 -",
+            addMenuTitle: "➕ 添加新菜品",
+            addMenuConfirmBtn: "➕ 确认添加菜品"
         },  
         th: {  
             deliveryBanner: "🚀 บริการจัดส่ง 24 ชั่วโมง | สามารถสั่งซื้อผ่าน Telegram หรือ WeChat ได้โดยตรง",
@@ -571,18 +594,20 @@
             shopsTitle: "🛍️ เมนูแนะนำยอดฮิต",  
             seeAllShops: "ดูร้านค้าทั้งหมด →",
             btnBackHome: "← กลับร้านค้า",  
+            btnBackCats: "← กลับหมวดหมู่",
             catTitle: "🛍️ หมวดหมู่ร้านค้า",  
             catSub: "โปรดเลือกหมวดหมู่อย่างที่คุณต้องการดู -",  
-            cnameAll: "ร้านค้าทั้งหมด",  
-            cnameNoodles: "ร้านก๋วยเตี๋ยว",  
-            cnameCake: "ร้านเค้ก & เบเกอรี่",
-            cnameBf: "ร้านอาหารเช้า",  
-            cnameRes: "ร้านอาหารใหญ่",  
-            cnameBbq: "บาร์บีคิว & ยำ",  
-            cnameDrink: "เครื่องดื่ม & ขนมหวาน",  
-            cnameTobacco: "บุหรี่ & สุรา",  
-            cnameNight: "ตลาดโต้รุ่ง",  
-            cnameOthers: "อื่นๆ",  
+            cnameAll: "All Shops", csubAll: "ร้านค้าทั้งหมด",
+            cnameNoodles: "Noodle Shops", csubNoodles: "ร้านก๋วยเตี๋ยว",
+            cnamePounded: "Pounded Shops", csubPounded: "ร้านส้มตำ/ตำรวม",
+            cnameCake: "Bakery & Cake", csubCake: "ร้านเค้ก & เบเกอรี่",
+            cnameBf: "Breakfast", csubBf: "ร้านอาหารเช้า",  
+            cnameRes: "Restaurants", csubRes: "ร้านอาหารใหญ่",  
+            cnameBbq: "BBQ & Salad", csubBbq: "บาร์บีคิว & ยำ",  
+            cnameDrink: "Drinks & Desserts", csubDrink: "เครื่องดื่ม & ขนมหวาน",  
+            cnameTobacco: "Cigarette & Alcohol", csubTobacco: "บุหรี่ & สุรา",  
+            cnameNight: "Night Market", csubNight: "ตลาดโต้รุ่ง",  
+            cnameOthers: "Others", csubOthers: "อื่นๆ",  
             sec3Title: "ประวัติคำสั่งซื้อส่วนตัว",  
             sec3Sub: "⏰ แสดงประวัติการสั่งซื้อของคุณ",  
             sec4Title: "ตะกร้าสินค้า",  
@@ -615,7 +640,19 @@
             btnCreateShop: "สร้างร้านค้า",  
             txtManageShopsTitle: "🛍️ จัดการร้านค้า (แก้ไขเมนูและแนะนำ)",
             itemNotePh: "✏️ หมายเหตุสำหรับเมนูนี้ (เช่น ไม่เผ็ด)",
-            viewMenuBtn: "ดูเมนู →"
+            viewMenuBtn: "ดูเมนู →",
+            addedToCartMsg: 'เพิ่ม "{title}" ลงในตะกร้าเรียบร้อยแล้ว',
+            adminPanelBtn: "🔐 ผู้ดูแลระบบ",
+            renameTitle: "✏️ เปลี่ยนชื่อร้าน (4 ภาษา)",
+            renameSub: "โปรดใส่ชื่อร้านตามแต่ละภาษา -",
+            saveRenameBtn: "บันทึก",
+            lblModalTotal: "ยอดรวม:",
+            btnModalAdd: "เพิ่มลงตะกร้า",
+            customerViewBtn: "👀 มุมมองลูกค้า",
+            adminOrdersTitle: "📦 จัดการคำสั่งซื้อทั้งหมดของลูกค้า",
+            adminOrdersSub: "คุณสามารถเปลี่ยนสถานะคำสั่งซื้อได้ที่นี่ -",
+            addMenuTitle: "➕ เพิ่มเมนูใหม่",
+            addMenuConfirmBtn: "➕ ยืนยันเพิ่มเมนู"
         },  
         en: {  
             deliveryBanner: "🚀 24/7 Delivery Service | You can also order directly via Telegram or WeChat",
@@ -624,18 +661,20 @@
             shopsTitle: "🛍️ Featured & Popular Dishes",  
             seeAllShops: "See All Shops →",
             btnBackHome: "← Back",  
+            btnBackCats: "← Back to Categories",
             catTitle: "🛍️ Shop Categories",  
             catSub: "Select a shop category you want to view -",  
-            cnameAll: "All Shops",  
-            cnameNoodles: "Noodle Shops",  
-            cnameCake: "Bakery & Cake",
-            cnameBf: "Breakfast",  
-            cnameRes: "Restaurants",  
-            cnameBbq: "BBQ & Salad",  
-            cnameDrink: "Drinks & Desserts",  
-            cnameTobacco: "Cigarette & Alcohol",  
-            cnameNight: "Night Market",  
-            cnameOthers: "Others",  
+            cnameAll: "All Shops", csubAll: "All Shops",
+            cnameNoodles: "Noodle Shops", csubNoodles: "Noodle Shops",
+            cnamePounded: "Pounded Shops", csubPounded: "Pounded / Somtum Shops",
+            cnameCake: "Bakery & Cake", csubCake: "Bakery & Cake",
+            cnameBf: "Breakfast", csubBf: "Breakfast",  
+            cnameRes: "Restaurants", csubRes: "Restaurants",  
+            cnameBbq: "BBQ & Salad", csubBbq: "BBQ & Salad",  
+            cnameDrink: "Drinks & Desserts", csubDrink: "Drinks & Desserts",  
+            cnameTobacco: "Cigarette & Alcohol", csubTobacco: "Cigarette & Alcohol",  
+            cnameNight: "Night Market", csubNight: "Night Market",  
+            cnameOthers: "Others", csubOthers: "Others",  
             sec3Title: "My Order History",  
             sec3Sub: "⏰ Displays your personal order history",  
             sec4Title: "Cart",  
@@ -668,15 +707,34 @@
             btnCreateShop: "Create Shop",  
             txtManageShopsTitle: "🛍️ Manage Shops (Edit Items & Featured)",
             itemNotePh: "✏️ Note for this item (e.g. No spicy)",
-            viewMenuBtn: "View Menu →"
+            viewMenuBtn: "View Menu →",
+            addedToCartMsg: '"{title}" has been added to cart.',
+            adminPanelBtn: "🔐 Admin Panel",
+            renameTitle: "✏️ Rename Shop (4 Languages)",
+            renameSub: "Enter shop names for each language -",
+            saveRenameBtn: "Save",
+            lblModalTotal: "Total:",
+            btnModalAdd: "Add to Cart",
+            customerViewBtn: "👀 Customer View",
+            adminOrdersTitle: "📦 Manage All Customer Orders",
+            adminOrdersSub: "You can update order statuses here -",
+            addMenuTitle: "➕ Add New Menu Item",
+            addMenuConfirmBtn: "➕ Add Menu Item"
         }  
     };  
+
+    const sidebarGroupLabels = {
+        my: { foodHeader: "စားစရာ", dessertHeader: "အချိုပွဲ", drinkHeader: "သောက်စရာ", coffeeSub: "ကော်ဖီ", coldDrinkSub: "အအေး" },
+        zh: { foodHeader: "美食", dessertHeader: "甜品", drinkHeader: "饮品", coffeeSub: "咖啡", coldDrinkSub: "冷饮/饮料" },
+        th: { foodHeader: "อาหาร", dessertHeader: "ของหวาน", drinkHeader: "เครื่องดื่ม", coffeeSub: "กาแฟ", coldDrinkSub: "เครื่องดื่มเย็น" },
+        en: { foodHeader: "Food", dessertHeader: "Desserts", drinkHeader: "Drinks", coffeeSub: "Coffee", coldDrinkSub: "Cold Drinks" }
+    };
 
     const defaultDefaultMenu = [
         {
             id: 101,
             shop: "Kungfu Burger 功夫汉堡",
-            category: "food",
+            category: "ခေါက်ဆွဲ",
             titleMy: "ကြော်မန်း(ဝက်/ကြက်/နွား/ပင်လယ်)",
             titleZh: "炒面(猪/鸡/牛/海鲜)",
             titleTh: "ผัดหมี่ (หมู/ไก่/เนื้อ/ทะเล)",
@@ -692,7 +750,7 @@
         "Kungfu Burger 功夫汉堡": { my: "ကွန်ဖူးဘာဂါ", zh: "Kungfu Burger 功夫汉堡", th: "กังฟูเบอร์เกอร์", en: "Kungfu Burger", category: "auto" }
     };
 
-    let db = { menu: [], shopNames: {}, shopLogos: {}, shopClosingTimes: {}, shopManualStatus: {}, cart: [], orders: [] };  
+    let db = { menu: [], shopNames: {}, shopLogos: {}, shopOpeningTimes: {}, shopClosingTimes: {}, shopManualStatus: {}, cart: [], orders: [] };  
 
     function autoFixOldDescriptions() {
         let changed = false;
@@ -718,6 +776,7 @@
                     db.menu = Array.isArray(rawMenu) ? rawMenu : Object.values(rawMenu);
                     db.shopNames = val.shopNames || defaultShopNames;
                     db.shopLogos = val.shopLogos || {};
+                    db.shopOpeningTimes = val.shopOpeningTimes || {};
                     db.shopClosingTimes = val.shopClosingTimes || {};
                     db.shopManualStatus = val.shopManualStatus || {};
                     
@@ -746,6 +805,7 @@
             menu: db.menu,
             shopNames: db.shopNames,
             shopLogos: db.shopLogos,
+            shopOpeningTimes: db.shopOpeningTimes,
             shopClosingTimes: db.shopClosingTimes,
             shopManualStatus: db.shopManualStatus,
             orders: db.orders
@@ -797,26 +857,40 @@
         return sData.my || shopKey;  
     }  
 
+    // 👉 ဆိုင်တစ်ဆိုင်ချင်းစီ၏ ဖွင့်ချိန်/ပိတ်ချိန် အလိုက် အလိုအလျောက် စစ်ဆေးပေးမည့် စနစ်
     function isShopClosed(shopName) {  
         let manualStatus = db.shopManualStatus[shopName];  
         if (manualStatus === 'closed') return true;  
         if (manualStatus === 'open') return false;  
 
+        let openTimeStr = db.shopOpeningTimes[shopName];   
         let closingTimeStr = db.shopClosingTimes[shopName];   
-        if (!closingTimeStr) return false;  
+        if (!openTimeStr && !closingTimeStr) return false;  
 
         let now = new Date();  
         let currentMinutes = now.getHours() * 60 + now.getMinutes();  
 
-        let parts = closingTimeStr.split(':');  
-        let closeMinutes = parseInt(parts[0]) * 60 + parseInt(parts[1]);  
+        let openMinutes = 0;
+        if (openTimeStr) {
+            let p1 = openTimeStr.split(':');
+            openMinutes = parseInt(p1[0]) * 60 + parseInt(p1[1]);
+        }
 
-        if (currentMinutes >= closeMinutes && currentMinutes < (7 * 60)) {  
-            return true;  
-        }  
-        if (currentMinutes >= closeMinutes) {  
-            return true;  
-        }  
+        let closeMinutes = 24 * 60;
+        if (closingTimeStr) {
+            let p2 = closingTimeStr.split(':');
+            closeMinutes = parseInt(p2[0]) * 60 + parseInt(p2[1]);
+        }
+
+        if (closeMinutes > openMinutes) {
+            if (currentMinutes < openMinutes || currentMinutes >= closeMinutes) {
+                return true; 
+            }
+        } else {
+            if (currentMinutes < openMinutes && currentMinutes >= closeMinutes) {
+                return true; 
+            }
+        }
         return false;  
     }  
 
@@ -954,6 +1028,7 @@
                 let sNameFull = (shop + ' ' + (sData.my||'') + ' ' + (sData.zh||'') + ' ' + (sData.th||'') + ' ' + (sData.en||'')).toLowerCase();  
 
                 if (typeKey === 'noodles' && (sNameFull.includes('noodle') || sNameFull.includes('ခေါက်ဆွဲ') || sNameFull.includes('မုန်းဟင်းခါး') || sNameFull.includes('ကြာဆံ') || sNameFull.includes('面') || sNameFull.includes('粉') || sNameFull.includes('米线'))) return true;  
+                if (typeKey === 'pounded' && (sNameFull.includes('pounded') || sNameFull.includes('somtum') || sNameFull.includes('အထောင်း') || sNameFull.includes('သင်္ဘောသီးထောင်း') || sNameFull.includes('舂') || sNameFull.includes('舂木瓜') || sNameFull.includes('ตำ'))) return true;
                 if (typeKey === 'cake' && (sNameFull.includes('cake') || sNameFull.includes('bakery') || sNameFull.includes('ကိတ်') || sNameFull.includes('မုန့်') || sNameFull.includes('糕点') || sNameFull.includes('蛋糕') || sNameFull.includes('面包') || sNameFull.includes('麵包'))) return true;  
                 if (typeKey === 'breakfast' && (sNameFull.includes('breakfast') || sNameFull.includes('မနက်စာ') || sNameFull.includes('နံနက်စာ') || sNameFull.includes('dimsum'))) return true;  
                 if (typeKey === 'restaurant' && (sNameFull.includes('restaurant') || sNameFull.includes('စားသောက်ဆိုင်') || sNameFull.includes('ထမင်းဆိုင်') || sNameFull.includes('餐厅') || sNameFull.includes('酒楼') || sNameFull.includes('饭店'))) return true;  
@@ -968,6 +1043,7 @@
                     let title = String(item.titleMy || item.title || item.titleZh || item.titleTh || item.titleEn || '').toLowerCase();  
                       
                     if (typeKey === 'noodles') return cat.includes('noodle') || cat.includes('ခေါက်ဆွဲ') || cat.includes('မုန်းဟင်းခါး') || title.includes('ခေါက်ဆွဲ') || title.includes('面') || title.includes('粉');  
+                    if (typeKey === 'pounded') return cat.includes('pounded') || cat.includes('အထောင်း') || cat.includes('somtum') || title.includes('ထောင်း') || title.includes('舂') || title.includes('ตำ');
                     if (typeKey === 'cake') return cat.includes('cake') || cat.includes('bakery') || cat.includes('ကိတ်') || title.includes('ကိတ်') || title.includes('cake') || title.includes('蛋糕') || title.includes('面包');  
                     if (typeKey === 'breakfast') return cat.includes('breakfast') || cat.includes('မနက်စာ');  
                     if (typeKey === 'restaurant') return cat.includes('restaurant') || cat.includes('စားသောက်ဆိုင်') || cat.includes('餐厅');  
@@ -1030,6 +1106,7 @@
             db.menu = [];  
             db.shopNames = {};  
             db.shopLogos = {};  
+            db.shopOpeningTimes = {};  
             db.shopClosingTimes = {};  
             db.shopManualStatus = {};  
             db.orders = [];  
@@ -1074,7 +1151,7 @@
         let titleZh = document.getElementById('new-item-zh').value.trim();  
         let titleTh = document.getElementById('new-item-th').value.trim();  
         let titleEn = document.getElementById('new-item-en').value.trim();  
-        let category = document.getElementById('new-item-cat').value;  
+        let category = document.getElementById('new-item-cat').value.trim() || 'ခေါက်ဆွဲ';  
         let price = parseFloat(document.getElementById('new-item-price').value) || 0;  
         let description = document.getElementById('new-item-desc').value.trim();  
         let image = document.getElementById('new-item-img').value.trim();  
@@ -1104,6 +1181,7 @@
         document.getElementById('new-item-zh').value = '';  
         document.getElementById('new-item-th').value = '';  
         document.getElementById('new-item-en').value = '';  
+        document.getElementById('new-item-cat').value = '';  
         document.getElementById('new-item-price').value = '';  
         document.getElementById('new-item-desc').value = '';  
         document.getElementById('new-item-img').value = '';  
@@ -1114,10 +1192,11 @@
     }  
 
     function deleteShop(shopName) {  
-        if(confirm(`"${getShopDisplayTitle(shopName)}" ဆိုင်နှင့် ၎င်း၏ မီနူးဟင်းလျာများကို အမှန်တကယ် ဖြတ်လိုပါသလား?`)) {  
+        if(confirm(`"${getShopDisplayTitle(shopName)}" ဆိုင်နှင့် ဈေးဆိုင်၏ မီနူးဟင်းလျာများကို အမှန်တကယ် ဖြတ်လိုပါသလား?`)) {  
             db.menu = db.menu.filter(m => m.shop !== shopName);  
             delete db.shopNames[shopName];  
             delete db.shopLogos[shopName];  
+            delete db.shopOpeningTimes[shopName];  
             delete db.shopClosingTimes[shopName];  
             delete db.shopManualStatus[shopName];  
             saveDataAsync();  
@@ -1153,6 +1232,11 @@
         alert(`"${getShopDisplayTitle(shopName)}" ဆိုင်၏ အမျိုးအစားကို ပြောင်းလဲပြီးပါပြီ!`);
     }
 
+    function updateShopOpeningTime(shopName, timeVal) {  
+        db.shopOpeningTimes[shopName] = timeVal;  
+        saveDataAsync();  
+    }  
+
     function updateShopClosingTime(shopName, timeVal) {  
         db.shopClosingTimes[shopName] = timeVal;  
         saveDataAsync();  
@@ -1185,13 +1269,11 @@
         }  
     }  
 
-    // 👉 NEW: Update Single Menu Item Category Directly
     function updateItemCategory(itemId, catVal) {
         let item = db.menu.find(m => m.id === itemId);
         if (item) {
-            item.category = catVal;
+            item.category = catVal.trim();
             saveDataAsync();
-            renderShopEditModalItems();
             renderAll();
         }
     }
@@ -1212,7 +1294,7 @@
                 : `<div style="width: 45px; height: 45px; background: #eee; border-radius: 6px; display: flex; align-items: center; justify-content: center; font-size: 10px; color: #888;">ပုံမရှိပါ</div>`;  
               
             let isFeatured = !!item.isFeatured;
-            let currentItemCat = item.category || 'food';
+            let currentItemCat = item.category || 'ခေါက်ဆွဲ';
 
             html += `<div class="card" style="margin-bottom: 8px; padding: 8px; background: #fafafa; position: relative;">  
                 <button class="btn btn-danger" style="position: absolute; top: 6px; right: 6px; padding: 2px 6px; font-size: 10px;" onclick="deleteSingleMenuItem(${item.id})">🗑️ ဖြတ်မည်</button>  
@@ -1221,11 +1303,7 @@
                     ${thumb}  
                     <div style="flex-grow:1;">  
                         <span style="font-size: 10px; color: #666; display:block;">အမျိုးအစား (Category):</span>
-                        <select style="margin:2px 0 0 0; padding:3px; font-size:11px;" onchange="updateItemCategory(${item.id}, this.value)">
-                            <option value="food" ${currentItemCat === 'food' ? 'selected' : ''}>စားစရာ (Food)</option>
-                            <option value="dessert" ${currentItemCat === 'dessert' ? 'selected' : ''}>အချိုပွဲ (Dessert)</option>
-                            <option value="drinks" ${currentItemCat === 'drinks' ? 'selected' : ''}>သောက်စရာ (Drinks)</option>
-                        </select>  
+                        <input type="text" value="${currentItemCat}" placeholder="ဥပမာ- ထမင်းကြော်၊ ခေါက်ဆွဲ၊ ကော်ဖီ၊ အအေး" style="margin:2px 0 0 0; padding:4px; font-size:11px;" onchange="updateItemCategory(${item.id}, this.value)">
                     </div>  
                 </div>  
                 <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 4px; margin-bottom: 4px; font-size: 11px;">  
@@ -1275,7 +1353,8 @@
             let displayShopName = getShopDisplayTitle(shop);  
             let currentLogo = db.shopLogos[shop] || '';
             let logoThumb = currentLogo ? `<img src="${currentLogo}" style="width:30px; height:30px; border-radius:50%; object-fit:cover; vertical-align:middle;">` : `<span>🛍️</span>`;  
-            let closingTime = db.shopClosingTimes[shop] || '19:00';  
+            let openingTime = db.shopOpeningTimes[shop] || '08:00';  
+            let closingTime = db.shopClosingTimes[shop] || '21:00';  
             let manualStatus = db.shopManualStatus[shop] || 'auto';  
             let isClosed = isShopClosed(shop);  
             
@@ -1305,6 +1384,7 @@
                     <select style="margin: 2px 0 0 0; padding: 4px; font-size: 11px;" onchange="updateShopCategory('${shop}', this.value)">
                         <option value="auto" ${currentCat === 'auto' ? 'selected' : ''}>Auto (အလိုအလျောက် စစ်ဆေး)</option>
                         <option value="noodles" ${currentCat === 'noodles' ? 'selected' : ''}>🍜 ခေါက်ဆွဲဆိုင်များ (Noodle Shops)</option>
+                        <option value="pounded" ${currentCat === 'pounded' ? 'selected' : ''}>🥗 အထောင်းဆိုင်များ (Pounded / Somtum Shops)</option>
                         <option value="cake" ${currentCat === 'cake' ? 'selected' : ''}>🎂 ကိတ် & မုန့်ဆိုင်များ (Bakery & Cake)</option>
                         <option value="breakfast" ${currentCat === 'breakfast' ? 'selected' : ''}>🍳 မနက်စာဆိုင်များ (Breakfast)</option>
                         <option value="restaurant" ${currentCat === 'restaurant' ? 'selected' : ''}>🍽️ စားသောက်ဆိုင်ကြီးများ (Restaurants)</option>
@@ -1315,17 +1395,23 @@
                         <option value="others" ${currentCat === 'others' ? 'selected' : ''}>📦 အခြား (Others)</option>
                     </select>
                 </div>
-                <div style="display: flex; justify-content: space-between; align-items: center; font-size: 11px; gap: 5px;">  
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 5px; font-size: 11px; margin-bottom: 6px;">  
                     <div>  
-                        <span>⏰ ပိတ်ချိန်:</span>  
-                        <input type="time" value="${closingTime}" style="width: 100px; padding: 2px; margin:0;" onchange="updateShopClosingTime('${shop}', this.value)">  
+                        <span>⏰ ဖွင့်ချိန်:</span>  
+                        <input type="time" value="${openingTime}" style="width: 100%; padding: 2px; margin:2px 0 0 0;" onchange="updateShopOpeningTime('${shop}', this.value)">  
                     </div>  
                     <div>  
-                        <span>အခြေအနေ:</span>  
-                        <select style="width: 90px; padding: 2px; margin:0;" onchange="setShopManualStatus('${shop}', this.value)">  
-                            <option value="auto" ${manualStatus === 'auto' ? 'selected' : ''}>Auto (အလိုအလျောက်)</option>  
-                            <option value="open" ${manualStatus === 'open' ? 'selected' : ''}>အမြဲဖွင့်</option>  
-                            <option value="closed" ${manualStatus === 'closed' ? 'selected' : ''}>အမြဲပိတ်</option>  
+                        <span>⏰ ပိတ်ချိန်:</span>  
+                        <input type="time" value="${closingTime}" style="width: 100%; padding: 2px; margin:2px 0 0 0;" onchange="updateShopClosingTime('${shop}', this.value)">  
+                    </div>  
+                </div>
+                <div style="display: flex; justify-content: space-between; align-items: center; font-size: 11px; gap: 5px;">  
+                    <div style="width: 100%;">  
+                        <span>အခြေအနေ (Manual Status):</span>  
+                        <select style="width: 100%; padding: 3px; margin:2px 0 0 0;" onchange="setShopManualStatus('${shop}', this.value)">  
+                            <option value="auto" ${manualStatus === 'auto' ? 'selected' : ''}>⏳ အချိန်အလိုက် Auto ဖွင့်/ပိတ်</option>  
+                            <option value="open" ${manualStatus === 'open' ? 'selected' : ''}>✅ အမြဲဖွင့် (Force Open)</option>  
+                            <option value="closed" ${manualStatus === 'closed' ? 'selected' : ''}>❌ အမြဲပိတ် (Force Closed)</option>  
                         </select>  
                     </div>  
                 </div>  
@@ -1440,19 +1526,21 @@
         document.getElementById('txt-shops-title').innerText = t.shopsTitle;  
         document.getElementById('btn-see-all-shops').innerText = t.seeAllShops;  
         document.getElementById('btn-back-home').innerText = t.btnBackHome;  
+        document.getElementById('btn-back-to-cats').innerText = t.btnBackCats;
         document.getElementById('txt-cat-title').innerText = t.catTitle;  
         document.getElementById('txt-cat-sub').innerText = t.catSub;  
           
-        document.getElementById('cname-all').innerText = t.cnameAll;  
-        document.getElementById('cname-noodles').innerText = t.cnameNoodles;  
-        document.getElementById('cname-cake').innerText = t.cnameCake;
-        document.getElementById('cname-bf').innerText = t.cnameBf;  
-        document.getElementById('cname-res').innerText = t.cnameRes;  
-        document.getElementById('cname-bbq').innerText = t.cnameBbq;  
-        document.getElementById('cname-drink').innerText = t.cnameDrink;  
-        document.getElementById('cname-tobacco').innerText = t.cnameTobacco;  
-        document.getElementById('cname-night').innerText = t.cnameNight;  
-        document.getElementById('cname-others').innerText = t.cnameOthers;  
+        document.getElementById('cname-all').innerText = t.cnameAll; document.getElementById('csub-all').innerText = t.csubAll;
+        document.getElementById('cname-noodles').innerText = t.cnameNoodles; document.getElementById('csub-noodles').innerText = t.csubNoodles;
+        document.getElementById('cname-pounded').innerText = t.cnamePounded; document.getElementById('csub-pounded').innerText = t.csubPounded;
+        document.getElementById('cname-cake').innerText = t.cnameCake; document.getElementById('csub-cake').innerText = t.csubCake;
+        document.getElementById('cname-bf').innerText = t.cnameBf; document.getElementById('csub-bf').innerText = t.csubBf;
+        document.getElementById('cname-res').innerText = t.cnameRes; document.getElementById('csub-res').innerText = t.csubRes;
+        document.getElementById('cname-bbq').innerText = t.cnameBbq; document.getElementById('csub-bbq').innerText = t.csubBbq;
+        document.getElementById('cname-drink').innerText = t.cnameDrink; document.getElementById('csub-drink').innerText = t.csubDrink;
+        document.getElementById('cname-tobacco').innerText = t.cnameTobacco; document.getElementById('csub-tobacco').innerText = t.csubTobacco;
+        document.getElementById('cname-night').innerText = t.cnameNight; document.getElementById('csub-night').innerText = t.csubNight;
+        document.getElementById('cname-others').innerText = t.cnameOthers; document.getElementById('csub-others').innerText = t.csubOthers;
 
         document.getElementById('txt-sec3-title').innerText = t.sec3Title;  
         document.getElementById('txt-sec3-sub').innerText = t.sec3Sub;  
@@ -1486,6 +1574,18 @@
         document.getElementById('btn-create-shop').innerText = t.btnCreateShop;  
         document.getElementById('txt-manage-shops-title').innerText = t.txtManageShopsTitle;  
         document.getElementById('btn-clear-all').innerText = t.btnClearData;  
+
+        document.getElementById('btn-admin-panel').innerText = t.adminPanelBtn;
+        document.getElementById('txt-rename-title').innerText = t.renameTitle;
+        document.getElementById('txt-rename-sub').innerText = t.renameSub;
+        document.getElementById('btn-save-rename').innerText = t.saveRenameBtn;
+        document.getElementById('lbl-modal-total').innerText = t.lblModalTotal;
+        document.getElementById('btn-modal-add').innerText = t.btnModalAdd;
+        document.getElementById('btn-customer-view').innerText = t.customerViewBtn;
+        document.getElementById('txt-admin-orders-title').innerText = t.adminOrdersTitle;
+        document.getElementById('txt-admin-orders-sub').innerText = t.adminOrdersSub;
+        document.getElementById('txt-add-menu-title').innerText = t.addMenuTitle;
+        document.getElementById('btn-add-menu-confirm').innerText = t.addMenuConfirmBtn;
           
         if (activeShopName) {  
             document.getElementById('selected-shop-title').innerText = `🛍️ ${getShopDisplayTitle(activeShopName)}`;  
@@ -1552,13 +1652,17 @@
 
     function openShopMenu(shopName) {  
         if (isShopClosed(shopName)) {  
-            alert(`⚠️ "${getShopDisplayTitle(shopName)}" ဆိုင်သည် အချိန်အခါတွင် ပိတ်ထားပြီးဖြစ်ပါသည်၊ (မှာယူ၍မရပါ။)`);  
+            alert(`⚠️ "${getShopDisplayTitle(shopName)}" ဆိုင်သည် ချိန်ကိုက်ပိတ်ထားချိန် ဖြစ်နေပါသည်၊ (မှာယူ၍မရပါ။)`);  
             return;  
         }  
 
         activeShopName = shopName;  
-        activeCategoryKey = 'food';  
         document.getElementById('selected-shop-title').innerText = `🛍️ ${getShopDisplayTitle(shopName)}`;  
+        
+        let shopItems = db.menu.filter(m => String(m.shop || '').trim() === String(shopName || '').trim());
+        let categories = [...new Set(shopItems.map(m => getItemEffectiveCategory(m)))];
+        activeCategoryKey = categories.length > 0 ? categories[0] : '';
+
         renderShopCategories();  
         renderShopItemsContinuous();  
           
@@ -1578,61 +1682,185 @@
         window.scrollTo(0, 0);  
     }  
 
+    function translateCategoryName(catName) {
+        if (!catName) return '';
+        let lower = catName.toLowerCase().trim();
+
+        const dict = {
+            my: { 
+                "炸鸡": "ကြက်ကြော်", "主食": "အဓိကအစားအစာ", "小食": "အဆာပြေ / သရေစာ", "甜品": "အချိုပွဲ", "饮品": "အအေး", "咖啡": "ကော်ဖီ", "面条": "ခေါက်ဆွဲ",
+                "面类": "ခေါက်ဆွဲအမျိုးအစား", "拌面类": "ခေါက်ဆွဲသုပ် အမျိုးအစား", "饭类": "ထမင်းအမျိုးအစား", "凉菜类": "အသုပ် / အအေးဟင်းလျာ", "加料区": "အပိုထည့်စရာများ (Toppings)", "冰粉/果汁": "အအေး & ဖျော်ရည်",
+                "drinks": "အအေး", "food": "စားစရာ", "noodle": "ခေါက်ဆွဲ", "ဟင်း": "ဟင်းလျာ", "သောက်စရာ": "သောက်စရာ", "涼拌米線": "ခေါက်ဆွဲသုပ်", "酸肉": "အချဉ်သား"
+            },
+            zh: { 
+                "ကြက်ကြော်": "炸鸡", "အဓိကအစားအစာ": "主食", "အဆာပြေ / သရေစာ": "小食", "အချိုပွဲ": "甜品", "အအေး": "饮品", "咖啡": "咖啡", "ခေါက်ဆွဲ": "面条",
+                "面类": "面类", "拌面类": "拌面类", "饭类": "饭类", "凉菜类": "凉菜类", "加料区": "加料区", "冰粉/果汁": "冰粉/果汁",
+                "drinks": "饮品", "food": "美食", "noodle": "面条", "ဟင်း": "荤菜/炒菜", "သောက်စရာ": "饮品", "ဟင်းလျာ": "炒菜"
+            },
+            th: { 
+                "ကြက်ကြော်": "ไก่ทอด", "အဓိကအစားအစာ": "อาหารจานหลัก", "အဆာပြေ / သရေစာ": "ของว่าง", "အချိုပွဲ": "ของหวาน", "အအေး": "เครื่องดื่ม", "咖啡": "กาแฟ", "ခေါက်ဆွဲ": "ก๋วยเตี๋ยว",
+                "面类": "ประเภทบะหมี่", "拌面类": "ประเภทบะหมี่แห้ง/ยำ", "饭类": "ประเภทข้าว", "凉菜类": "ยำ/ของทานเล่น", "加料区": "เพิ่มท็อปปิ้ง", "冰粉/果汁": "เครื่องดื่ม/น้ำผลไม้",
+                "drinks": "เครื่องดื่ม", "food": "อาหาร", "noodle": "ก๋วยเตี๋ยว", "ဟင်း": "กับข้าว", "သောက်စရာ": "เครื่องดื่ม"
+            },
+            en: { 
+                "ကြက်ကြော်": "Fried Chicken", "အဓိကအစားအစာ": "Main Course", "အဆာပြေ / သရေစာ": "Snacks", "အချိုပွဲ": "Desserts", "အအေး": "Cold Drinks", "咖啡": "Coffee", "ခေါက်ဆွဲ": "Noodles",
+                "面类": "Noodles", "拌面类": "Mixed Noodles", "饭类": "Rice Dishes", "凉菜类": "Cold Dishes", "加料区": "Toppings", "冰粉/果汁": "Drinks & Desserts",
+                "drinks": "Drinks", "food": "Food", "noodle": "Noodles", "ဟင်း": "Dishes", "သောက်စရာ": "Drinks"
+            }
+        };
+
+        let langDict = dict[currentLang] || dict.my;
+        for (let key in langDict) {
+            if (lower === key.toLowerCase() || lower.includes(key.toLowerCase())) {
+                return langDict[key];
+            }
+        }
+        return catName;
+    }
+
+    function getItemEffectiveCategory(item) {
+        let cat = (item.category || '').trim();
+        let genericCats = ["စားစရာ", "food", "美食", "อาหาร", "အထွေထွေ", "general", "อื่นๆ", "အဓိက"];
+        
+        if (!cat || genericCats.includes(cat.toLowerCase())) {
+            let title = (item.titleMy || item.title || item.titleZh || item.titleTh || item.titleEn || '').toLowerCase();
+            if (title.includes('ကော်ဖီ') || title.includes('coffee') || title.includes('咖啡') || title.includes('กาแฟ')) return 'ကော်ဖီ';
+            if (title.includes('အအေး') || title.includes('ဖျော်ရည်') || title.includes('drink') || title.includes('tea') || title.includes('juice') || title.includes('น้ำ') || title.includes('饮料') || title.includes('奶茶')) return 'အအေး';
+            if (title.includes('အချိုပွဲ') || title.includes('ကိတ်') || title.includes('မုန့်') || title.includes('dessert') || title.includes('cake') || title.includes('bakery') || title.includes('蛋糕') || title.includes('甜品') || title.includes('ของหวาน')) return 'အချိုပွဲ';
+            if (title.includes('ခေါက်ဆွဲ') || title.includes('ကြာဆံ') || title.includes('မုန့်ဟင်းခါး') || title.includes('面') || title.includes('粉') || title.includes('ก๋วยเตี๋ยว') || title.includes('noodle')) return 'ခေါက်ဆွဲ';
+            return 'ဟင်း';
+        }
+        return cat;
+    }
+
     function renderShopCategories() {  
         let container = document.getElementById('shop-categories-sidebar');  
+        let shopItems = db.menu.filter(m => String(m.shop || '').trim() === String(activeShopName || '').trim());
+        
+        let presentCats = [...new Set(shopItems.map(m => getItemEffectiveCategory(m)).filter(Boolean))];
+        let labels = sidebarGroupLabels[currentLang] || sidebarGroupLabels.my;
+
+        let dessertKeywords = ["အချိုပွဲ", "ကိတ်", "မုန့်", "dessert", "cake", "bakery", "蛋糕", "甜品", "ของหวาน"];
+        let coffeeKeywords = ["ကော်ဖီ", "coffee", "咖啡", "กาแฟ"];
+        let drinkKeywords = ["သောက်စရာ", "အအေး", "ဖျော်ရည်", "drink", "tea", "juice", "น้ำ", "饮料", "奶茶", "เครื่องดื่ม"];
+
+        let foodCats = [];
+        let dessertCats = [];
+        let coffeeCats = [];
+        let coldDrinkCats = [];
+
+        presentCats.forEach(cat => {
+            let catLower = cat.toLowerCase();
+            if (dessertKeywords.some(k => catLower.includes(k))) {
+                dessertCats.push(cat);
+            } else if (coffeeKeywords.some(k => catLower.includes(k))) {
+                coffeeCats.push(cat);
+            } else if (drinkKeywords.some(k => catLower.includes(k))) {
+                coldDrinkCats.push(cat);
+            } else {
+                foodCats.push(cat);
+            }
+        });
+
         let html = '';  
-        Object.keys(categoryDict).forEach(catKey => {  
-            let isActive = catKey === activeCategoryKey ? 'active' : '';  
-            let catLabel = categoryDict[catKey][currentLang] || categoryDict[catKey]['my'];  
-            html += `<div class="cat-item ${isActive}" id="side-cat-${catKey}" onclick="scrollToCategorySection('${catKey}')">${catLabel}</div>`;  
-        });  
+
+        html += `<div class="cat-item main-group-header" onclick="scrollToMainGroup('food')">🍔 ${labels.foodHeader}</div>`;
+        foodCats.forEach(sub => {
+            let isActive = sub === activeCategoryKey ? 'active' : '';
+            let safeId = encodeURIComponent(sub);
+            let translatedName = translateCategoryName(sub);
+            html += `<div class="cat-item sub-item ${isActive}" id="side-cat-${safeId}" onclick="scrollToCategorySection('${safeId}', '${sub}')">${translatedName}</div>`;
+        });
+
+        if (dessertCats.length > 0) {
+            html += `<div class="cat-item main-group-header" style="margin-top:4px;" onclick="scrollToMainGroup('dessert')">🍰 ${labels.dessertHeader}</div>`;
+            dessertCats.forEach(sub => {
+                let isActive = sub === activeCategoryKey ? 'active' : '';
+                let safeId = encodeURIComponent(sub);
+                let translatedName = translateCategoryName(sub);
+                html += `<div class="cat-item sub-item ${isActive}" id="side-cat-${safeId}" onclick="scrollToCategorySection('${safeId}', '${sub}')">${translatedName}</div>`;
+            });
+        }
+
+        if (coffeeCats.length > 0 || coldDrinkCats.length > 0) {
+            html += `<div class="cat-item main-group-header" style="margin-top:4px;" onclick="scrollToMainGroup('drink')">🧋 ${labels.drinkHeader}</div>`;
+            
+            if (coffeeCats.length > 0) {
+                html += `<div class="cat-item" style="font-weight:bold; color:#333; background:#fafafa; padding:6px 4px; font-size:11px; text-align:left; padding-left:10px;">☕ ${labels.coffeeSub}</div>`;
+                coffeeCats.forEach(sub => {
+                    let isActive = sub === activeCategoryKey ? 'active' : '';
+                    let safeId = encodeURIComponent(sub);
+                    let translatedName = translateCategoryName(sub);
+                    html += `<div class="cat-item sub-item ${isActive}" id="side-cat-${safeId}" onclick="scrollToCategorySection('${safeId}', '${sub}')" style="padding-left:18px;">${translatedName}</div>`;
+                });
+            }
+
+            if (coldDrinkCats.length > 0) {
+                html += `<div class="cat-item" style="font-weight:bold; color:#333; background:#fafafa; padding:6px 4px; font-size:11px; text-align:left; padding-left:10px;">🧃 ${labels.coldDrinkSub}</div>`;
+                coldDrinkCats.forEach(sub => {
+                    let isActive = sub === activeCategoryKey ? 'active' : '';
+                    let safeId = encodeURIComponent(sub);
+                    let translatedName = translateCategoryName(sub);
+                    html += `<div class="cat-item sub-item ${isActive}" id="side-cat-${safeId}" onclick="scrollToCategorySection('${safeId}', '${sub}')" style="padding-left:18px;">${translatedName}</div>`;
+                });
+            }
+        }
+
         container.innerHTML = html;  
     }  
 
-    function scrollToCategorySection(catKey) {  
-        activeCategoryKey = catKey;  
-        updateSidebarHighlight(catKey);  
-        let sectionEl = document.getElementById(`menu-cat-section-${catKey}`);  
+    function scrollToMainGroup(groupType) {
+        let shopItems = db.menu.filter(m => String(m.shop || '').trim() === String(activeShopName || '').trim());
+        let presentCats = [...new Set(shopItems.map(m => getItemEffectiveCategory(m)).filter(Boolean))];
+
+        let dessertKeywords = ["အချိုပွဲ", "ကိတ်", "မုန့်", "dessert", "cake", "bakery", "蛋糕", "甜品", "ของหวาน"];
+        let drinkKeywords = ["သောက်စရာ", "ကော်ဖီ", "အအေး", "ဖျော်ရည်", "drink", "coffee", "tea", "juice", "น้ำ", "饮料", "奶茶", "咖啡", "เครื่องดื่ม"];
+
+        let targetCat = "";
+        if (groupType === 'food') {
+            targetCat = presentCats.find(c => !dessertKeywords.some(k => c.toLowerCase().includes(k)) && !drinkKeywords.some(k => c.toLowerCase().includes(k)));
+        } else if (groupType === 'dessert') {
+            targetCat = presentCats.find(c => dessertKeywords.some(k => c.toLowerCase().includes(k)));
+        } else if (groupType === 'drink') {
+            targetCat = presentCats.find(c => drinkKeywords.some(k => c.toLowerCase().includes(k)));
+        }
+
+        if (targetCat) {
+            let safeId = encodeURIComponent(targetCat);
+            scrollToCategorySection(safeId, targetCat);
+        }
+    }
+
+    function scrollToCategorySection(safeCatId, catName) {  
+        activeCategoryKey = catName;  
+        updateSidebarHighlight(safeCatId);  
+        let sectionEl = document.getElementById(`menu-cat-section-${safeCatId}`);  
         if (sectionEl) {  
             sectionEl.scrollIntoView({ behavior: 'smooth' });  
         }  
     }  
 
-    function updateSidebarHighlight(catKey) {  
+    function updateSidebarHighlight(safeCatId) {  
         document.querySelectorAll('.categories-sidebar .cat-item').forEach(el => el.classList.remove('active'));  
-        let activeEl = document.getElementById(`side-cat-${catKey}`);  
+        let activeEl = document.getElementById(`side-cat-${safeCatId}`);  
         if (activeEl) activeEl.classList.add('active');  
     }  
 
     function onMenuScroll() {  
-        let catKeys = Object.keys(categoryDict);  
-        for (let key of catKeys) {  
-            let sectionEl = document.getElementById(`menu-cat-section-${key}`);  
+        let shopItems = db.menu.filter(m => String(m.shop || '').trim() === String(activeShopName || '').trim());
+        let categories = [...new Set(shopItems.map(m => getItemEffectiveCategory(m)).filter(Boolean))];
+
+        for (let catName of categories) {  
+            let safeCatId = encodeURIComponent(catName);
+            let sectionEl = document.getElementById(`menu-cat-section-${safeCatId}`);  
             if (sectionEl) {  
                 let rect = sectionEl.getBoundingClientRect();  
                 if (rect.top >= 0 && rect.top <= 200) {  
-                    updateSidebarHighlight(key);  
+                    updateSidebarHighlight(safeCatId);  
                     break;  
                 }  
             }  
         }  
-    }  
-
-    function normalizeCategory(rawCat, itemTitle = '') {  
-        let c = String(rawCat || '').trim().toLowerCase();  
-        let title = String(itemTitle || '').trim().toLowerCase();  
-          
-        if (c.includes('သောက်စရာ') || c.includes('drink') || c.includes('beverage') || c.includes('ဖျော်ရည်') || c.includes('ရေ') || c.includes('ကော်ဖီ') || c.includes('လက်ဖက်ရည်') || c.includes('tea') || c.includes('milk tea') || c.includes('juice') || c.includes('cola') || c.includes('beer') || c.includes('drinks') || c.includes('饮料') || c.includes('饮品') || c.includes('เครื่องดื่ม') ||  
-            title.includes('လက်ဖက်ရည်') || title.includes('ဖျော်ရည်') || title.includes('ရေ') || title.includes('ကော်ဖီ') || title.includes('tea') || title.includes('milk tea') || title.includes('coffee') || title.includes('juice') || title.includes('drink')) {  
-            return "drinks";  
-        }  
-          
-        if (c.includes('အချိုပွဲ') || c.includes('dessert') || c.includes('ice cream') || c.includes('ကိတ်') || c.includes('糕点') || c.includes('甜品') || c.includes('ขนมหวาน') ||  
-            title.includes('အချိုပွဲ') || title.includes('ice cream') || title.includes('ကိတ်') || title.includes('pudding') || title.includes('dessert')) {  
-            return "dessert";  
-        }  
-          
-        return "food";  
     }  
 
     function renderShopItemsContinuous() {  
@@ -1641,18 +1869,42 @@
         let html = '';  
 
         let shopItems = db.menu.filter(m => String(m.shop || '').trim() === String(activeShopName || '').trim());
+        let rawCategories = [...new Set(shopItems.map(m => getItemEffectiveCategory(m)).filter(Boolean))];
 
-        let categoriesInOrder = ['food', 'dessert', 'drinks'];  
+        let dessertKeywords = ["အချိုပွဲ", "ကိတ်", "မုန့်", "dessert", "cake", "bakery", "蛋糕", "甜品", "ของหวาน"];
+        let coffeeKeywords = ["ကော်ဖီ", "coffee", "咖啡", "กาแฟ"];
+        let drinkKeywords = ["သောက်စရာ", "အအေး", "ဖျော်ရည်", "drink", "tea", "juice", "น้ำ", "饮料", "奶茶", "เครื่องดื่ม"];
+
+        let foodCats = [];
+        let dessertCats = [];
+        let coffeeCats = [];
+        let coldDrinkCats = [];
+
+        rawCategories.forEach(cat => {
+            let catLower = cat.toLowerCase();
+            if (dessertKeywords.some(k => catLower.includes(k))) {
+                dessertCats.push(cat);
+            } else if (coffeeKeywords.some(k => catLower.includes(k))) {
+                coffeeCats.push(cat);
+            } else if (drinkKeywords.some(k => catLower.includes(k))) {
+                coldDrinkCats.push(cat);
+            } else {
+                foodCats.push(cat);
+            }
+        });
+
+        let orderedCategories = [...foodCats, ...dessertCats, ...coffeeCats, ...coldDrinkCats];
         let hasAnyItems = false;  
 
-        categoriesInOrder.forEach(catKey => {  
-            let catLabel = categoryDict[catKey][currentLang] || categoryDict[catKey]['my'];  
-            let filteredItems = shopItems.filter(m => normalizeCategory(m.category, getItemTitle(m)) === catKey);  
+        orderedCategories.forEach(catName => {  
+            let safeCatId = encodeURIComponent(catName);
+            let filteredItems = shopItems.filter(m => getItemEffectiveCategory(m) === catName);  
 
             if (filteredItems.length > 0) {  
                 hasAnyItems = true;  
-                html += `<div id="menu-cat-section-${catKey}">  
-                    <div class="category-header">${catLabel}</div>`;  
+                let headerTranslated = translateCategoryName(catName);
+                html += `<div id="menu-cat-section-${safeCatId}">  
+                    <div class="category-header">${headerTranslated}</div>`;  
 
                 filteredItems.forEach(item => {  
                     let imgTag = item.image ? `<img src="${item.image}" class="menu-item-img" onclick="openImageModal('${item.image}')">` : `<div class="menu-item-img" style="display:flex; align-items:center; justify-content:center; font-size:20px;">🍲</div>`;  
@@ -1727,7 +1979,7 @@
         if (!item) return;  
 
         if (isShopClosed(item.shop)) {  
-            alert(`⚠️ တောင်းပန်ပါတယ် Bro၊ "${getShopDisplayTitle(item.shop)}" ဆိုင်သည် အချိန်အခါတွင် ပိတ်ထားပြီးဖြစ်သောကြောင့် မှာယူ၍မရတော့ပါခဗျ။`);  
+            alert(`⚠️ တောင်းပန်ပါတယ် Bro၊ "${getShopDisplayTitle(item.shop)}" ဆိုင်သည် ချိန်ကိုက်ပိတ်ထားချိန် ဖြစ်နေသောကြောင့် မှာယူ၍မရတော့ပါခဗျ။`);  
             return;  
         }  
 
@@ -1874,7 +2126,10 @@
             });  
         }  
         updateCartUI();   
-        alert(`"${displayTitle}" ကို ခြင်းတောင်းထဲ ထည့်ပြီးပါပြီ။`);  
+
+        let t = translations[currentLang] || translations.my;
+        let alertMsg = t.addedToCartMsg.replace('{title}', displayTitle);
+        alert(alertMsg);  
     }  
 
     function renderAll() {  
@@ -2038,7 +2293,7 @@
           
         for (let i = 0; i < db.cart.length; i++) {  
             if (isShopClosed(db.cart[i].shop)) {  
-                alert(`⚠️ တောင်းပန်ပါတယ် Bro၊ "${getShopDisplayTitle(db.cart[i].shop)}" ဆိုင်သည် အချိန်အခါတွင် ပိတ်ထားပြီးဖြစ်ပါသဖြင့် မှာယူ၍ မရနိုင်ပါ။`);  
+                alert(`⚠️ တောင်းပန်ပါတယ် Bro၊ "${getShopDisplayTitle(db.cart[i].shop)}" ဆိုင်သည် ချိန်ကိုက်ပိတ်ထားချိန် ဖြစ်နေပါသဖြင့် မှာယူ၍ မရနိုင်ပါ။`);  
                 return;  
             }  
         }  
@@ -2170,7 +2425,7 @@
                     if (i === 0 && (firstColVal.toLowerCase() === 'shop' || firstColVal === 'ဆိုင်')) continue;  
 
                     let shop = String(r[0] || 'General Shop').trim();  
-                    let category = String(r[1] || 'food').trim();  
+                    let category = String(r[1] || 'ခေါက်ဆွဲ').trim();  
                     let titleMy = String(r[2] || '').trim();  
                     let titleZh = String(r[3] || '').trim();  
                     let titleTh = String(r[4] || '').trim();  
