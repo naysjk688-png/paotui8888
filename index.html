@@ -11,7 +11,6 @@
     <style>  
         body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; margin: 0; background: #f8f9fa; color: #333; padding-bottom: 70px; }  
         
-        /* Modern Sticky Language Bar */
         .fixed-lang-bar { 
             position: fixed; 
             top: 0; 
@@ -37,7 +36,6 @@
         .section { display: none; padding: 15px; }  
         .section.active { display: block !important; }  
 
-        /* Delivery info header box */
         .delivery-info-box { background: linear-gradient(135deg, #d32f2f, #b71c1c); padding: 12px 15px; border-radius: 12px; margin-bottom: 12px; color: white; box-shadow: 0 2px 6px rgba(211,47,47,0.3); text-align: center; }  
           
         .bio-card { background: white; border-radius: 12px; padding: 15px; margin-bottom: 12px; border: 1px solid #eee; box-shadow: 0 2px 5px rgba(0,0,0,0.05); position: relative; }  
@@ -123,6 +121,10 @@
         .option-choice-btn { background: #f8f9fa; border: 1px solid #ddd; padding: 10px; border-radius: 8px; text-align: center; font-size: 12px; font-weight: bold; cursor: pointer; transition: all 0.2s; color: #444; }
         .option-choice-btn.selected { background: #ffebee; border-color: #d32f2f; color: #d32f2f; }
         .option-tag-req { font-size: 10px; background: #e0e0e0; color: #555; padding: 2px 6px; border-radius: 4px; margin-left: 5px; }
+
+        .admin-order-summary { display: flex; justify-content: space-between; align-items: center; cursor: pointer; padding: 4px 0; }
+        .admin-order-details-box { margin-top: 8px; padding-top: 8px; border-top: 1px dashed #ddd; display: none; }
+        .admin-order-details-box.expanded { display: block; }
     </style>
 </head>  
 <body>  
@@ -359,7 +361,7 @@
 
     <div class="card" style="background: #fff8f8; border: 1px solid #d32f2f; margin-bottom: 15px;">  
         <b style="color: #d32f2f; font-size: 14px;" id="txt-admin-orders-title">📦 Customer များမှ လာသော အော်ဒါအအားလုံး စီမံရန်</b>  
-        <p style="font-size: 11px; color: #666; margin-top: 2px;" id="txt-admin-orders-sub">ရွေးချယ်ရောက်လာသော အော်ဒါများ၏ အခြေအနေ (Status) ကို ပြောင်းလဲပေးနိုင်ပါသည် -</p>  
+        <p style="font-size: 11px; color: #666; margin-top: 2px;" id="txt-admin-orders-sub">အော်ဒါနံပါတ်ကို နှိပ်၍ အသေးစိတ်ကြည့်ရှုခြင်းနှင့် Status ပြောင်းလဲခြင်းများ လုပ်ဆောင်နိုင်ပါသည် -</p>  
         <div id="admin-all-orders-list" style="margin-top: 10px;"></div>  
     </div>  
 
@@ -401,7 +403,7 @@
                 <input type="text" id="new-item-en" placeholder="English" style="margin:2px 0; padding:5px; font-size:11px;">  
             </div>  
             <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 4px;">  
-                <input type="text" id="new-item-cat" placeholder="အမျိုးအစား (ဥပမာ- ထမင်းကြော်၊ ခေါက်ဆွဲ၊ ကော်ဖီ၊ အအေး)" style="margin:2px 0; padding:5px; font-size:11px;">  
+                <input type="text" id="new-item-cat" placeholder="အမျိုးအစား (ဥပမာ- ဟင်းရည်/汤类)" style="margin:2px 0; padding:5px; font-size:11px;">  
                 <input type="number" id="new-item-price" placeholder="ဈေးနှုန်း (฿)" style="margin:2px 0; padding:5px; font-size:11px;">  
             </div>  
             <input type="text" id="new-item-desc" placeholder="အသားရွေး:[ဝက်,ကြက်,နွား:+11,ပင်လယ်စာ:+11]" style="margin:2px 0; padding:5px; font-size:11px;">  
@@ -448,6 +450,7 @@
     let pendingItemForTopping = null;  
     let selectedMeatOption = null; 
     let selectedToppings = [];  
+    let expandedAdminOrders = {}; // Admin panel တွင် အော်ဒါအသေးစိတ် ဖွင့်/ပိတ် မှတ်ရန်
 
     const adminTelegramUser = "Paotui8888";  
     const adminWeChatId = "wxid_dwee7vqfh8qz22";  
@@ -516,7 +519,7 @@
             btnModalAdd: "ခြင်းတောင်းထဲထည့်မည်",
             customerViewBtn: "👀 Customer View",
             adminOrdersTitle: "📦 Customer များမှ လာသော အော်ဒါအအားလုံး စီမံရန်",
-            adminOrdersSub: "ရွေးချယ်ရောက်လာသော အော်ဒါများ၏ အခြေအနေ (Status) ကို ပြောင်းလဲပေးနိုင်ပါသည် -",
+            adminOrdersSub: "အော်ဒါနံပါတ်ကို နှိပ်၍ အသေးစိတ်ကြည့်ရှုခြင်းနှင့် Status ပြောင်းလဲခြင်းများ လုပ်ဆောင်နိုင်ပါသည် -",
             addMenuTitle: "➕ မီနူးအသစ် ထည့်ရန်",
             addMenuConfirmBtn: "➕ မီနူးအသစ် ထည့်မည်"
         },  
@@ -583,7 +586,7 @@
             btnModalAdd: "加入购物车",
             customerViewBtn: "👀 客户视图",
             adminOrdersTitle: "📦 管理客户所有订单",
-            adminOrdersSub: "您可以更改订单的处理状态 -",
+            adminOrdersSub: "点击订单号可展开/折叠详情并更改状态 -",
             addMenuTitle: "➕ 添加新菜品",
             addMenuConfirmBtn: "➕ 确认添加菜品"
         },  
@@ -650,7 +653,7 @@
             btnModalAdd: "เพิ่มลงตะกร้า",
             customerViewBtn: "👀 มุมมองลูกค้า",
             adminOrdersTitle: "📦 จัดการคำสั่งซื้อทั้งหมดของลูกค้า",
-            adminOrdersSub: "คุณสามารถเปลี่ยนสถานะคำสั่งซื้อได้ที่นี่ -",
+            adminOrdersSub: "คลิกที่หมายเลขคำสั่งซื้อเพื่อดูรายละเอียดและเปลี่ยนสถานะ -",
             addMenuTitle: "➕ เพิ่มเมนูใหม่",
             addMenuConfirmBtn: "➕ ยืนยันเพิ่มเมนู"
         },  
@@ -717,7 +720,7 @@
             btnModalAdd: "Add to Cart",
             customerViewBtn: "👀 Customer View",
             adminOrdersTitle: "📦 Manage All Customer Orders",
-            adminOrdersSub: "You can update order statuses here -",
+            adminOrdersSub: "Click order number to expand/collapse details and change status -",
             addMenuTitle: "➕ Add New Menu Item",
             addMenuConfirmBtn: "➕ Add Menu Item"
         }  
@@ -734,7 +737,7 @@
         {
             id: 101,
             shop: "Kungfu Burger 功夫汉堡",
-            category: "ခေါက်ဆွဲ",
+            category: "ခေါက်ဆွဲ/面条",
             titleMy: "ကြော်မန်း(ဝက်/ကြက်/နွား/ပင်လယ်)",
             titleZh: "炒面(猪/鸡/牛/海鲜)",
             titleTh: "ผัดหมี่ (หมู/ไก่/เนื้อ/ทะเล)",
@@ -767,6 +770,26 @@
         if (changed) saveDataAsync();
     }
 
+    // ၂၄ နာရီ ကျော်လွန်သော အော်ဒါများကို ပြီးဆုံးပြီး (Completed) သို့ အလိုအလျောက် ပြောင်းပေးခြင်း
+    function checkAutoCompletedOrders() {
+        let now = new Date().getTime();
+        let twentyFourHours = 24 * 60 * 60 * 1000;
+        let changed = false;
+
+        if (db.orders && db.orders.length > 0) {
+            db.orders.forEach(o => {
+                let orderTime = o.timestamp || now;
+                if ((now - orderTime) >= twentyFourHours && o.status !== 'Completed') {
+                    o.status = 'Completed';
+                    changed = true;
+                }
+            });
+        }
+        if (changed) {
+            saveDataAsync();
+        }
+    }
+
     function initFirebaseSync() {
         return new Promise((resolve) => {
             database.ref('tachileik_delivery').on('value', (snapshot) => {
@@ -789,6 +812,7 @@
                     }
                 }
                 autoFixOldDescriptions();
+                checkAutoCompletedOrders();
                 renderAll();
                 resolve();
             });
@@ -857,7 +881,6 @@
         return sData.my || shopKey;  
     }  
 
-    // 👉 ဆိုင်တစ်ဆိုင်ချင်းစီ၏ ဖွင့်ချိန်/ပိတ်ချိန် အလိုက် အလိုအလျောက် စစ်ဆေးပေးမည့် စနစ်
     function isShopClosed(shopName) {  
         let manualStatus = db.shopManualStatus[shopName];  
         if (manualStatus === 'closed') return true;  
@@ -1151,7 +1174,7 @@
         let titleZh = document.getElementById('new-item-zh').value.trim();  
         let titleTh = document.getElementById('new-item-th').value.trim();  
         let titleEn = document.getElementById('new-item-en').value.trim();  
-        let category = document.getElementById('new-item-cat').value.trim() || 'ခေါက်ဆွဲ';  
+        let category = document.getElementById('new-item-cat').value.trim() || 'ခေါက်ဆွဲ/面条';  
         let price = parseFloat(document.getElementById('new-item-price').value) || 0;  
         let description = document.getElementById('new-item-desc').value.trim();  
         let image = document.getElementById('new-item-img').value.trim();  
@@ -1294,7 +1317,7 @@
                 : `<div style="width: 45px; height: 45px; background: #eee; border-radius: 6px; display: flex; align-items: center; justify-content: center; font-size: 10px; color: #888;">ပုံမရှိပါ</div>`;  
               
             let isFeatured = !!item.isFeatured;
-            let currentItemCat = item.category || 'ခေါက်ဆွဲ';
+            let currentItemCat = item.category || 'ခေါက်ဆွဲ/面条';
 
             html += `<div class="card" style="margin-bottom: 8px; padding: 8px; background: #fafafa; position: relative;">  
                 <button class="btn btn-danger" style="position: absolute; top: 6px; right: 6px; padding: 2px 6px; font-size: 10px;" onclick="deleteSingleMenuItem(${item.id})">🗑️ ဖြတ်မည်</button>  
@@ -1303,7 +1326,7 @@
                     ${thumb}  
                     <div style="flex-grow:1;">  
                         <span style="font-size: 10px; color: #666; display:block;">အမျိုးအစား (Category):</span>
-                        <input type="text" value="${currentItemCat}" placeholder="ဥပမာ- ထမင်းကြော်၊ ခေါက်ဆွဲ၊ ကော်ဖီ၊ အအေး" style="margin:2px 0 0 0; padding:4px; font-size:11px;" onchange="updateItemCategory(${item.id}, this.value)">
+                        <input type="text" value="${currentItemCat}" placeholder="ဥပမာ- ဟင်းရည်/汤类" style="margin:2px 0 0 0; padding:4px; font-size:11px;" onchange="updateItemCategory(${item.id}, this.value)">
                     </div>  
                 </div>  
                 <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 4px; margin-bottom: 4px; font-size: 11px;">  
@@ -1420,6 +1443,11 @@
         container.innerHTML = html;  
     }  
 
+    function toggleAdminOrderExpand(orderId) {
+        expandedAdminOrders[orderId] = !expandedAdminOrders[orderId];
+        renderAdminAllOrders();
+    }
+
     function renderAdminAllOrders() {  
         let container = document.getElementById('admin-all-orders-list');  
         if (db.orders.length === 0) {  
@@ -1428,23 +1456,33 @@
         }  
         let html = '';  
         db.orders.forEach(o => {  
+            let isExpanded = !!expandedAdminOrders[o.id];
+            let statusBadge = o.status === 'Pending' ? '🟡 စောင့်ဆိုင်းဆဲ' : (o.status === 'Delivering' ? '🔵 ပို့ဆောင်နေဆဲ' : '🟢 ပြီးဆုံးပြီး');
+
             html += `<div class="card" style="margin-bottom:8px; border-left: 4px solid #d32f2f; background: #fff;">  
-                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:4px;">  
-                    <b>Order #${o.id}</b>  
-                    <span style="font-size:11px; color:#888;">📅 ${o.dateStr || 'မသိရပါ'}</span>  
-                </div>  
-                <div style="margin-bottom:6px;">  
-                    <b>Status:</b>   
-                    <select onchange="updateOrderStatus('${o.id}', this.value)" style="width: auto; padding: 2px 6px; margin: 0; font-size: 11px;">  
-                        <option value="Pending" ${o.status === 'Pending' ? 'selected' : ''}>🟡 စောင့်ဆိုင်းဆဲ (Pending)</option>  
-                        <option value="Delivering" ${o.status === 'Delivering' ? 'selected' : ''}>🔵 ပို့ဆောင်နေဆဲ (Delivering)</option>  
-                        <option value="Completed" ${o.status === 'Completed' ? 'selected' : ''}>🟢 ပြီးဆုံးပြီး (Completed)</option>  
-                    </select>  
-                </div>  
-                <span style="font-size: 12px; color: #333;"><b>Items:</b> ${o.items.map(i => `${i.displayTitle}${i.toppingText ? ' ['+i.toppingText+']' : ''}${i.customNote ? ' ('+i.customNote+')' : ''} (${getShopDisplayTitle(i.shop)}) x${i.qty}`).join(', ')}</span><br>  
-                <span style="font-size: 11px; color: #555;">📞 <b>ဖုန်း:</b> ${o.phone} | 📍 <b>နေရပ်:</b> ${o.address}</span><br>  
-                <span style="font-size: 11px; color: #555;">💬 <b>မှတ်စု:</b> ${o.note || '-'}</span>  
-                <div style="margin-top: 5px; font-weight: bold; color: #d32f2f;">Total: ฿${o.total}</div>  
+                <div class="admin-order-summary" onclick="toggleAdminOrderExpand('${o.id}')">
+                    <div><b>Order #${o.id}</b> <span style="font-size:11px; color:#666; margin-left:6px;">(${o.total}฿)</span></div>
+                    <div style="display:flex; align-items:center; gap:6px;">
+                        <span style="font-size:11px; font-weight:bold; color:#d32f2f;">${statusBadge}</span>
+                        <span style="font-size:14px; font-weight:bold; color:#888;">${isExpanded ? '▲' : '▼'}</span>
+                    </div>
+                </div>
+
+                <div class="admin-order-details-box ${isExpanded ? 'expanded' : ''}">
+                    <div style="font-size:11px; color:#888; margin-bottom:6px;">📅 နေ့စွဲ: ${o.dateStr || 'မသိရပါ'}</div>
+                    <div style="margin-bottom:6px;">  
+                        <b>Status ပြောင်းရန်:</b>   
+                        <select onchange="updateOrderStatus('${o.id}', this.value)" style="width: auto; padding: 4px 8px; margin: 2px 0 0 0; font-size: 11px;">  
+                            <option value="Pending" ${o.status === 'Pending' ? 'selected' : ''}>🟡 စောင့်ဆိုင်းဆဲ (Pending)</option>  
+                            <option value="Delivering" ${o.status === 'Delivering' ? 'selected' : ''}>🔵 ပို့ဆောင်နေဆဲ (Delivering)</option>  
+                            <option value="Completed" ${o.status === 'Completed' ? 'selected' : ''}>🟢 ပြီးဆုံးပြီး (Completed)</option>  
+                        </select>  
+                    </div>  
+                    <div style="font-size: 12px; color: #333; margin-bottom:4px;"><b>Items:</b> ${o.items.map(i => `${i.displayTitle}${i.toppingText ? ' ['+i.toppingText+']' : ''}${i.customNote ? ' ('+i.customNote+')' : ''} (${getShopDisplayTitle(i.shop)}) x${i.qty}`).join(', ')}</div>  
+                    <div style="font-size: 11px; color: #555; margin-bottom:2px;">📞 <b>ဖုန်း:</b> ${o.phone} | 📍 <b>နေရပ်:</b> ${o.address}</div>  
+                    <div style="font-size: 11px; color: #555; margin-bottom:4px;">💬 <b>မှတ်စု:</b> ${o.note || '-'}</div>  
+                    <div style="margin-top: 5px; font-weight: bold; color: #d32f2f;">Total: ฿${o.total}</div>  
+                </div>
             </div>`;  
         });  
         container.innerHTML = html;  
@@ -1456,6 +1494,7 @@
             order.status = newStatus;  
             saveDataAsync();  
             renderOrders();  
+            renderAdminAllOrders();
             alert(`Order #${orderId} ရဲ့ Status ကို "${newStatus}" သို့ ပြောင်းလဲပြီးပါပြီ။`);  
         }  
     }  
@@ -1621,6 +1660,23 @@
                 if (idx === index) {  
                     sec.style.display = 'block';  
                     sec.classList.add('active');  
+
+                    // 🛒 ခြင်းတောင်း (Cart) ဖွင့်လိုက်သည်နှင့် အရင်သိမ်းထားသော ဧည့်သည်အချက်အလက်ကို ဖုန်းမရိုက်ဘဲ Auto-fill လုပ်ပေးမည်
+                    if (index === 3) {
+                        let savedPhone = localStorage.getItem('tachileik_customer_phone');
+                        let savedAddress = localStorage.getItem('tachileik_customer_address');
+                        let savedMap = localStorage.getItem('tachileik_customer_map');
+
+                        if (savedPhone && !document.getElementById('customer-phone').value) {
+                            document.getElementById('customer-phone').value = savedPhone;
+                        }
+                        if (savedAddress && !document.getElementById('customer-address').value) {
+                            document.getElementById('customer-address').value = savedAddress;
+                        }
+                        if (savedMap && !document.getElementById('customer-map').value) {
+                            document.getElementById('customer-map').value = savedMap;
+                        }
+                    }
                 } else {  
                     sec.style.display = 'none';  
                     sec.classList.remove('active');  
@@ -1682,10 +1738,18 @@
         window.scrollTo(0, 0);  
     }  
 
+    // ဘယ်ဘက် Sidebar အမျိုးအစားများတွင် Slash (/) ပါသော ဘာသာစကားမျိုးစုံ (ဥပမာ- ဟင်းရည်/汤类/ซุป/Soup) ကို အလိုအလျောက် ရွေးချယ်ပြသပေးခြင်း
     function translateCategoryName(catName) {
         if (!catName) return '';
-        let lower = catName.toLowerCase().trim();
+        let parts = catName.split('/');
+        if (parts.length > 1) {
+            if (currentLang === 'my') return parts[0].trim();
+            if (currentLang === 'zh') return (parts[1] ? parts[1].trim() : parts[0].trim());
+            if (currentLang === 'th') return (parts[2] ? parts[2].trim() : (parts[1] ? parts[1].trim() : parts[0].trim()));
+            if (currentLang === 'en') return (parts[3] ? parts[3].trim() : (parts[1] ? parts[1].trim() : parts[0].trim()));
+        }
 
+        let lower = catName.toLowerCase().trim();
         const dict = {
             my: { 
                 "炸鸡": "ကြက်ကြော်", "主食": "အဓိကအစားအစာ", "小食": "အဆာပြေ / သရေစာ", "甜品": "အချိုပွဲ", "饮品": "အအေး", "咖啡": "ကော်ဖီ", "面条": "ခေါက်ဆွဲ",
@@ -1698,7 +1762,7 @@
                 "drinks": "饮品", "food": "美食", "noodle": "面条", "ဟင်း": "荤菜/炒菜", "သောက်စရာ": "饮品", "ဟင်းလျာ": "炒菜"
             },
             th: { 
-                "ကြက်ကြော်": "ไก่ทอด", "အဓိကအစားအစာ": "อาหารจานหลัก", "အဆာပြေ / သရေစာ": "ของว่าง", "အချိုပွဲ": "ของหวาน", "အအေး": "เครื่องดื่ม", "咖啡": "กาแฟ", "ခေါက်ဆွဲ": "ก๋วยเตี๋ยว",
+                "ကြက်ကြော်": "ไก่ทอด", "အဓိកအစားအစာ": "อาหารจานหลัก", "အဆာပြေ / သရေစာ": "ของว่าง", "အချိုပွဲ": "ของหวาน", "အအေး": "เครื่องดื่ม", "咖啡": "กาแฟ", "ခေါက်ဆွဲ": "ก๋วยเตี๋ยว",
                 "面类": "ประเภทบะหมี่", "拌面类": "ประเภทบะหมี่แห้ง/ยำ", "饭类": "ประเภทข้าว", "凉菜类": "ยำ/ของทานเล่น", "加料区": "เพิ่มท็อปปิ้ง", "冰粉/果汁": "เครื่องดื่ม/น้ำผลไม้",
                 "drinks": "เครื่องดื่ม", "food": "อาหาร", "noodle": "ก๋วยเตี๋ยว", "ဟင်း": "กับข้าว", "သောက်စရာ": "เครื่องดื่ม"
             },
@@ -1724,11 +1788,11 @@
         
         if (!cat || genericCats.includes(cat.toLowerCase())) {
             let title = (item.titleMy || item.title || item.titleZh || item.titleTh || item.titleEn || '').toLowerCase();
-            if (title.includes('ကော်ဖီ') || title.includes('coffee') || title.includes('咖啡') || title.includes('กาแฟ')) return 'ကော်ဖီ';
-            if (title.includes('အအေး') || title.includes('ဖျော်ရည်') || title.includes('drink') || title.includes('tea') || title.includes('juice') || title.includes('น้ำ') || title.includes('饮料') || title.includes('奶茶')) return 'အအေး';
-            if (title.includes('အချိုပွဲ') || title.includes('ကိတ်') || title.includes('မုန့်') || title.includes('dessert') || title.includes('cake') || title.includes('bakery') || title.includes('蛋糕') || title.includes('甜品') || title.includes('ของหวาน')) return 'အချိုပွဲ';
-            if (title.includes('ခေါက်ဆွဲ') || title.includes('ကြာဆံ') || title.includes('မုန့်ဟင်းခါး') || title.includes('面') || title.includes('粉') || title.includes('ก๋วยเตี๋ยว') || title.includes('noodle')) return 'ခေါက်ဆွဲ';
-            return 'ဟင်း';
+            if (title.includes('ကော်ဖီ') || title.includes('coffee') || title.includes('咖啡') || title.includes('กาแฟ')) return 'ကော်ဖီ/咖啡';
+            if (title.includes('အအေး') || title.includes('ဖျော်ရည်') || title.includes('drink') || title.includes('tea') || title.includes('juice') || title.includes('น้ำ') || title.includes('饮料') || title.includes('奶茶')) return 'အအေး/饮品';
+            if (title.includes('အချိုပွဲ') || title.includes('ကိတ်') || title.includes('မုန့်') || title.includes('dessert') || title.includes('cake') || title.includes('bakery') || title.includes('蛋糕') || title.includes('甜品') || title.includes('ของหวาน')) return 'အချိုပွဲ/甜品';
+            if (title.includes('ခေါက်ဆွဲ') || title.includes('ကြာဆံ') || title.includes('မုန့်ဟင်းခါး') || title.includes('面') || title.includes('粉') || title.includes('ก๋วยเตี๋ยว') || title.includes('noodle')) return 'ခေါက်ဆွဲ/面条';
+            return 'ဟင်းလျာ/炒菜';
         }
         return cat;
     }
@@ -1742,7 +1806,7 @@
 
         let dessertKeywords = ["အချိုပွဲ", "ကိတ်", "မုန့်", "dessert", "cake", "bakery", "蛋糕", "甜品", "ของหวาน"];
         let coffeeKeywords = ["ကော်ဖီ", "coffee", "咖啡", "กาแฟ"];
-        let drinkKeywords = ["သောက်စရာ", "အအေး", "ဖျော်ရည်", "drink", "tea", "juice", "น้ำ", "饮料", "奶茶", "เครื่องดื่ม"];
+        let drinkKeywords = ["သောက်စရာ", "အအေး", "ဖျော်ရည်", "drink", "coffee", "tea", "juice", "น้ำ", "饮料", "奶茶", "咖啡", "เครื่องดื่ม"];
 
         let foodCats = [];
         let dessertCats = [];
@@ -1873,7 +1937,7 @@
 
         let dessertKeywords = ["အချိုပွဲ", "ကိတ်", "မုန့်", "dessert", "cake", "bakery", "蛋糕", "甜品", "ของหวาน"];
         let coffeeKeywords = ["ကော်ဖီ", "coffee", "咖啡", "กาแฟ"];
-        let drinkKeywords = ["သောက်စရာ", "အအေး", "ဖျော်ရည်", "drink", "tea", "juice", "น้ำ", "饮料", "奶茶", "เครื่องดื่ม"];
+        let drinkKeywords = ["သောက်စရာ", "အအေး", "ဖျော်ရည်", "drink", "tea", "juice", "น้ำ", "饮料", "奶茶", "咖啡", "เครื่องดื่ม"];
 
         let foodCats = [];
         let dessertCats = [];
@@ -2318,6 +2382,20 @@
         let total = subtotal + tax;  
 
         let now = new Date();  
+        let currentMonthStr = now.getFullYear() + '-' + String(now.getMonth() + 1).padStart(2, '0');
+
+        let nextId = 1;
+        if (db.orders && db.orders.length > 0) {
+            let currentMonthOrders = db.orders.filter(o => o.orderMonth === currentMonthStr);
+            if (currentMonthOrders.length > 0) {
+                let maxId = Math.max(...currentMonthOrders.map(o => parseInt(o.id) || 0));
+                if (!isNaN(maxId) && maxId > 0) {
+                    nextId = maxId + 1;
+                }
+            }
+        }
+        let orderId = nextId;
+
         let dateStr = now.toLocaleDateString('my-MM', { year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit' });  
 
         let itemsText = db.cart.map(i => {
@@ -2329,10 +2407,11 @@
                 ? `${i.displayTitle} (${myTitle})` 
                 : i.displayTitle;
 
-            return `• ${displayTitleWithMy} ${toppingStr}(${getShopDisplayTitle(i.shop)}) x ${i.qty} = ฿${i.price * i.qty}${noteText}`;
+            return `• ${displayTitleWithMy} ${toppingStr}x ${i.qty} = ฿${i.price * i.qty}${noteText}`;
         }).join('\n');  
           
         let orderMsg = `🛒 NEW FOOD ORDER - 大其力跑腿8888\n\n` +  
+                       `🆔 အော်ဒါနံပါတ်: #${orderId}\n` +
                        `📅 နေ့စွဲ: ${dateStr}\n` +  
                        `🛍️ ဆိုင်အမည်: ${shopsInCart.join(', ')}\n` +  
                        `📦 မှာထားသည့်ပစ္စည်းများ:\n${itemsText}\n\n` +  
@@ -2346,13 +2425,15 @@
                        `💬 အထွေထွေမှတ်စု: ${note || 'မရှိပါ။'}`;  
           
         db.orders.unshift({   
-            id: Date.now().toString().slice(-4),   
+            id: orderId,
+            orderMonth: currentMonthStr,
             dateStr: dateStr,  
             timestamp: now.getTime(),  
             items: [...db.cart],   
             total: total.toFixed(1),   
             phone,   
-            address: address || mapLink,   
+            address: address,   
+            mapLink: mapLink,  
             note,   
             status: 'Pending'   
         });  
@@ -2425,7 +2506,7 @@
                     if (i === 0 && (firstColVal.toLowerCase() === 'shop' || firstColVal === 'ဆိုင်')) continue;  
 
                     let shop = String(r[0] || 'General Shop').trim();  
-                    let category = String(r[1] || 'ခေါက်ဆွဲ').trim();  
+                    let category = String(r[1] || 'ခေါက်ဆွဲ/面条').trim();  
                     let titleMy = String(r[2] || '').trim();  
                     let titleZh = String(r[3] || '').trim();  
                     let titleTh = String(r[4] || '').trim();  
