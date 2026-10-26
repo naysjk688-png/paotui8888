@@ -125,6 +125,10 @@
         .admin-order-summary { display: flex; justify-content: space-between; align-items: center; cursor: pointer; padding: 4px 0; }
         .admin-order-details-box { margin-top: 8px; padding-top: 8px; border-top: 1px dashed #ddd; display: none; }
         .admin-order-details-box.expanded { display: block; }
+
+        /* အော်ဒါပင်မ ကွန်တိန်နာ (စီမံမည် ခလုတ်နှိပ်မှ ပွင့်လာမည့် ပုံစံ) */
+        .admin-orders-main-wrapper { display: none; margin-top: 12px; border-top: 1px dashed #ffcdd2; padding-top: 10px; }
+        .admin-orders-main-wrapper.open { display: block; }
     </style>
 </head>  
 <body>  
@@ -359,10 +363,19 @@
         <button class="btn btn-danger" style="margin-top: 10px; width: 100%;" onclick="clearAllData()" id="btn-clear-all">🗑️ ဒေတာအအားလုံး ဖြတ်ရန်</button>  
     </div>  
 
+    <!-- 👉 စီမံမည် ခလုတ်နှိပ်မှ ပွင့်လာမည့် အော်ဒါမန်းနဂျာ -->
     <div class="card" style="background: #fff8f8; border: 1px solid #d32f2f; margin-bottom: 15px;">  
-        <b style="color: #d32f2f; font-size: 14px;" id="txt-admin-orders-title">📦 Customer များမှ လာသော အော်ဒါအအားလုံး စီမံရန်</b>  
-        <p style="font-size: 11px; color: #666; margin-top: 2px;" id="txt-admin-orders-sub">အော်ဒါနံပါတ်ကို နှိပ်၍ အသေးစိတ်ကြည့်ရှုခြင်းနှင့် Status ပြောင်းလဲခြင်းများ လုပ်ဆောင်နိုင်ပါသည် -</p>  
-        <div id="admin-all-orders-list" style="margin-top: 10px;"></div>  
+        <div style="display:flex; justify-content:space-between; align-items:center; cursor:pointer;" onclick="toggleAdminOrdersWrapper()">
+            <div>
+                <b style="color: #d32f2f; font-size: 14px;" id="txt-admin-orders-title">📦 Customer များမှ လာသော အော်ဒါအအားလုံး စီမံရန်</b>  
+                <p style="font-size: 11px; color: #666; margin: 2px 0 0 0;" id="txt-admin-orders-sub">အော်ဒါများကို စီမံရန် "စီမံမည်" ခလုတ်ကို နှိပ်ပါ -</p>  
+            </div>
+            <button class="btn" style="padding: 6px 12px; font-size: 11px; background: #d32f2f; white-space: nowrap; flex-shrink: 0;" id="btn-toggle-admin-orders-wrap">⚙️ စီမံမည်</button>
+        </div>
+
+        <div class="admin-orders-main-wrapper" id="admin-orders-wrapper">
+            <div id="admin-all-orders-list"></div>  
+        </div>
     </div>  
 
     <div class="card" style="background: #fff8f8; border: 1px solid #d32f2f; margin-bottom: 15px;">  
@@ -450,7 +463,7 @@
     let pendingItemForTopping = null;  
     let selectedMeatOption = null; 
     let selectedToppings = [];  
-    let expandedAdminOrders = {}; // Admin panel တွင် အော်ဒါအသေးစိတ် ဖွင့်/ပိတ် မှတ်ရန်
+    let expandedAdminOrders = {}; 
 
     const adminTelegramUser = "Paotui8888";  
     const adminWeChatId = "wxid_dwee7vqfh8qz22";  
@@ -519,7 +532,7 @@
             btnModalAdd: "ခြင်းတောင်းထဲထည့်မည်",
             customerViewBtn: "👀 Customer View",
             adminOrdersTitle: "📦 Customer များမှ လာသော အော်ဒါအအားလုံး စီမံရန်",
-            adminOrdersSub: "အော်ဒါနံပါတ်ကို နှိပ်၍ အသေးစိတ်ကြည့်ရှုခြင်းနှင့် Status ပြောင်းလဲခြင်းများ လုပ်ဆောင်နိုင်ပါသည် -",
+            adminOrdersSub: "အော်ဒါများကို စီမံရန် \"စီမံမည်\" ခလုတ်ကို နှိပ်ပါ -",
             addMenuTitle: "➕ မီနူးအသစ် ထည့်ရန်",
             addMenuConfirmBtn: "➕ မီနူးအသစ် ထည့်မည်"
         },  
@@ -586,7 +599,7 @@
             btnModalAdd: "加入购物车",
             customerViewBtn: "👀 客户视图",
             adminOrdersTitle: "📦 管理客户所有订单",
-            adminOrdersSub: "点击订单号可展开/折叠详情并更改状态 -",
+            adminOrdersSub: "点击“管理”按钮展开订单列表 -",
             addMenuTitle: "➕ 添加新菜品",
             addMenuConfirmBtn: "➕ 确认添加菜品"
         },  
@@ -653,7 +666,7 @@
             btnModalAdd: "เพิ่มลงตะกร้า",
             customerViewBtn: "👀 มุมมองลูกค้า",
             adminOrdersTitle: "📦 จัดการคำสั่งซื้อทั้งหมดของลูกค้า",
-            adminOrdersSub: "คลิกที่หมายเลขคำสั่งซื้อเพื่อดูรายละเอียดและเปลี่ยนสถานะ -",
+            adminOrdersSub: "คลิกปุ่ม \"จัดการ\" เพื่อเปิดดูรายการคำสั่งซื้อ -",
             addMenuTitle: "➕ เพิ่มเมนูใหม่",
             addMenuConfirmBtn: "➕ ยืนยันเพิ่มเมนู"
         },  
@@ -720,7 +733,7 @@
             btnModalAdd: "Add to Cart",
             customerViewBtn: "👀 Customer View",
             adminOrdersTitle: "📦 Manage All Customer Orders",
-            adminOrdersSub: "Click order number to expand/collapse details and change status -",
+            adminOrdersSub: "Click \"Manage\" button to view order list -",
             addMenuTitle: "➕ Add New Menu Item",
             addMenuConfirmBtn: "➕ Add Menu Item"
         }  
@@ -770,7 +783,6 @@
         if (changed) saveDataAsync();
     }
 
-    // ၂၄ နာရီ ကျော်လွန်သော အော်ဒါများကို ပြီးဆုံးပြီး (Completed) သို့ အလိုအလျောက် ပြောင်းပေးခြင်း
     function checkAutoCompletedOrders() {
         let now = new Date().getTime();
         let twentyFourHours = 24 * 60 * 60 * 1000;
@@ -1443,6 +1455,19 @@
         container.innerHTML = html;  
     }  
 
+    // 👉 "စီမံမည်" ခလုတ်နှိပ်မှ အော်ဒါများ ပွင့်လာစေရန်
+    function toggleAdminOrdersWrapper() {
+        let wrapper = document.getElementById('admin-orders-wrapper');
+        let btn = document.getElementById('btn-toggle-admin-orders-wrap');
+        if (wrapper.classList.contains('open')) {
+            wrapper.classList.remove('open');
+            btn.innerText = '⚙️ စီမံမည်';
+        } else {
+            wrapper.classList.add('open');
+            btn.innerText = '✖️ ပိတ်မည်';
+        }
+    }
+
     function toggleAdminOrderExpand(orderId) {
         expandedAdminOrders[orderId] = !expandedAdminOrders[orderId];
         renderAdminAllOrders();
@@ -1451,7 +1476,7 @@
     function renderAdminAllOrders() {  
         let container = document.getElementById('admin-all-orders-list');  
         if (db.orders.length === 0) {  
-            container.innerHTML = '<div style="color: #666; font-size: 12px;">အော်ဒါများ မရှိသေးပါ</div>';  
+            container.innerHTML = '<div style="color: #666; font-size: 12px; text-align:center; padding:10px;">အော်ဒါများ မရှိသေးပါခင်ဗျာ</div>';  
             return;  
         }  
         let html = '';  
@@ -1738,7 +1763,6 @@
         window.scrollTo(0, 0);  
     }  
 
-    // ဘယ်ဘက် Sidebar အမျိုးအစားများတွင် Slash (/) ပါသော ဘာသာစကားမျိုးစုံ (ဥပမာ- ဟင်းရည်/汤类/ซุป/Soup) ကို အလိုအလျောက် ရွေးချယ်ပြသပေးခြင်း
     function translateCategoryName(catName) {
         if (!catName) return '';
         let parts = catName.split('/');
@@ -1762,7 +1786,7 @@
                 "drinks": "饮品", "food": "美食", "noodle": "面条", "ဟင်း": "荤菜/炒菜", "သောက်စရာ": "饮品", "ဟင်းလျာ": "炒菜"
             },
             th: { 
-                "ကြက်ကြော်": "ไก่ทอด", "အဓိកအစားအစာ": "อาหารจานหลัก", "အဆာပြေ / သရေစာ": "ของว่าง", "အချိုပွဲ": "ของหวาน", "အအေး": "เครื่องดื่ม", "咖啡": "กาแฟ", "ခေါက်ဆွဲ": "ก๋วยเตี๋ยว",
+                "ကြက်ကြော်": "ไก่ทอด", "အဓိကအစားအစာ": "อาหารจานหลัก", "အဆာပြေ / သရေစာ": "ของว่าง", "အချိုပွဲ": "ของหวาน", "အအေး": "เครื่องดื่ม", "咖啡": "กาแฟ", "ခေါက်ဆွဲ": "ก๋วยเตี๋ยว",
                 "面类": "ประเภทบะหมี่", "拌面类": "ประเภทบะหมี่แห้ง/ยำ", "饭类": "ประเภทข้าว", "凉菜类": "ยำ/ของทานเล่น", "加料区": "เพิ่มท็อปปิ้ง", "冰粉/果汁": "เครื่องดื่ม/น้ำผลไม้",
                 "drinks": "เครื่องดื่ม", "food": "อาหาร", "noodle": "ก๋วยเตี๋ยว", "ဟင်း": "กับข้าว", "သောက်စရာ": "เครื่องดื่ม"
             },
@@ -1784,143 +1808,109 @@
 
     function getItemEffectiveCategory(item) {
         let cat = (item.category || '').trim();
-        let genericCats = ["စားစရာ", "food", "美食", "อาหาร", "အထွေထွေ", "general", "อื่นๆ", "အဓိက"];
+        let genericCats = ["စားစရာ", "food", "美食", "อาหาร", "အထွေထွေ", "general", "ဟင်း", "ဟင်းလျာ", ""];
         
-        if (!cat || genericCats.includes(cat.toLowerCase())) {
-            let title = (item.titleMy || item.title || item.titleZh || item.titleTh || item.titleEn || '').toLowerCase();
-            if (title.includes('ကော်ဖီ') || title.includes('coffee') || title.includes('咖啡') || title.includes('กาแฟ')) return 'ကော်ဖီ/咖啡';
-            if (title.includes('အအေး') || title.includes('ဖျော်ရည်') || title.includes('drink') || title.includes('tea') || title.includes('juice') || title.includes('น้ำ') || title.includes('饮料') || title.includes('奶茶')) return 'အအေး/饮品';
-            if (title.includes('အချိုပွဲ') || title.includes('ကိတ်') || title.includes('မုန့်') || title.includes('dessert') || title.includes('cake') || title.includes('bakery') || title.includes('蛋糕') || title.includes('甜品') || title.includes('ของหวาน')) return 'အချိုပွဲ/甜品';
-            if (title.includes('ခေါက်ဆွဲ') || title.includes('ကြာဆံ') || title.includes('မုန့်ဟင်းခါး') || title.includes('面') || title.includes('粉') || title.includes('ก๋วยเตี๋ยว') || title.includes('noodle')) return 'ခေါက်ဆွဲ/面条';
-            return 'ဟင်းလျာ/炒菜';
+        if (genericCats.includes(cat.toLowerCase())) {
+            let titleStr = (item.titleMy || item.title || item.titleZh || item.titleTh || item.titleEn || '').toLowerCase();
+            if (titleStr.includes('ကော်ဖီ') || titleStr.includes('coffee') || titleStr.includes('咖啡') || titleStr.includes('latte') || titleStr.includes('americano') || titleStr.includes('cappuccino')) return "ကော်ဖီ/咖啡";
+            if (titleStr.includes('အအေး') || titleStr.includes('drink') || titleStr.includes('tea') || titleStr.includes('ဖျော်ရည်') || titleStr.includes('奶茶') || titleStr.includes('果汁') || titleStr.includes('饮料') || titleStr.includes('ชา')) return "အအေး/饮品";
+            if (titleStr.includes('ကိတ်') || titleStr.includes('cake') || titleStr.includes('မုန့်') || titleStr.includes('蛋糕') || titleStr.includes('面包') || titleStr.includes('甜品') || titleStr.includes('အချိုပွဲ')) return "အချိုပွဲ/甜品";
+            if (titleStr.includes('ခေါက်ဆွဲ') || titleStr.includes('မုန်းဟင်းခါး') || titleStr.includes('ကြာဆံ') || titleStr.includes('面') || titleStr.includes('粉') || titleStr.includes('noodle')) return "ခေါက်ဆွဲ/面条";
         }
-        return cat;
+        return cat || "ခေါက်ဆွဲ/面条";
+    }
+
+    function isDrinkCategory(catName) {
+        let lower = (catName || '').toLowerCase();
+        return lower.includes('drink') || lower.includes('သောက်စရာ') || lower.includes('အအေး') || lower.includes('ဖျော်ရည်') || lower.includes('coffee') || lower.includes('tea') || lower.includes('ကော်ဖီ') || lower.includes('奶茶') || lower.includes('饮料') || lower.includes('咖啡') || lower.includes('冰粉');
+    }
+
+    function isDessertCategory(catName) {
+        let lower = (catName || '').toLowerCase();
+        return lower.includes('dessert') || lower.includes('အချိုပွဲ') || lower.includes('ကိတ်') || lower.includes('မုန့်') || lower.includes('cake') || lower.includes('bakery') || lower.includes('蛋糕') || lower.includes('面包') || lower.includes('甜品');
     }
 
     function renderShopCategories() {  
-        let container = document.getElementById('shop-categories-sidebar');  
-        let shopItems = db.menu.filter(m => String(m.shop || '').trim() === String(activeShopName || '').trim());
-        
-        let presentCats = [...new Set(shopItems.map(m => getItemEffectiveCategory(m)).filter(Boolean))];
-        let labels = sidebarGroupLabels[currentLang] || sidebarGroupLabels.my;
+        let sidebar = document.getElementById('shop-categories-sidebar');  
+        let shopItems = db.menu.filter(m => String(m.shop || '').trim() === String(activeShopName || '').trim());  
+        let categories = [...new Set(shopItems.map(m => getItemEffectiveCategory(m)))];  
 
-        let dessertKeywords = ["အချိုပွဲ", "ကိတ်", "မုန့်", "dessert", "cake", "bakery", "蛋糕", "甜品", "ของหวาน"];
-        let coffeeKeywords = ["ကော်ဖီ", "coffee", "咖啡", "กาแฟ"];
-        let drinkKeywords = ["သောက်စရာ", "အအေး", "ဖျော်ရည်", "drink", "coffee", "tea", "juice", "น้ำ", "饮料", "奶茶", "咖啡", "เครื่องดื่ม"];
+        if (categories.length === 0) {  
+            sidebar.innerHTML = '';  
+            return;  
+        }  
 
         let foodCats = [];
         let dessertCats = [];
-        let coffeeCats = [];
-        let coldDrinkCats = [];
+        let drinkCats = [];
 
-        presentCats.forEach(cat => {
-            let catLower = cat.toLowerCase();
-            if (dessertKeywords.some(k => catLower.includes(k))) {
+        categories.forEach(cat => {
+            if (isDrinkCategory(cat)) {
+                drinkCats.push(cat);
+            } else if (isDessertCategory(cat)) {
                 dessertCats.push(cat);
-            } else if (coffeeKeywords.some(k => catLower.includes(k))) {
-                coffeeCats.push(cat);
-            } else if (drinkKeywords.some(k => catLower.includes(k))) {
-                coldDrinkCats.push(cat);
             } else {
                 foodCats.push(cat);
             }
         });
 
+        let lbls = sidebarGroupLabels[currentLang] || sidebarGroupLabels.my;
         let html = '';  
 
-        html += `<div class="cat-item main-group-header" onclick="scrollToMainGroup('food')">🍔 ${labels.foodHeader}</div>`;
-        foodCats.forEach(sub => {
-            let isActive = sub === activeCategoryKey ? 'active' : '';
-            let safeId = encodeURIComponent(sub);
-            let translatedName = translateCategoryName(sub);
-            html += `<div class="cat-item sub-item ${isActive}" id="side-cat-${safeId}" onclick="scrollToCategorySection('${safeId}', '${sub}')">${translatedName}</div>`;
-        });
-
-        if (dessertCats.length > 0) {
-            html += `<div class="cat-item main-group-header" style="margin-top:4px;" onclick="scrollToMainGroup('dessert')">🍰 ${labels.dessertHeader}</div>`;
-            dessertCats.forEach(sub => {
-                let isActive = sub === activeCategoryKey ? 'active' : '';
-                let safeId = encodeURIComponent(sub);
-                let translatedName = translateCategoryName(sub);
-                html += `<div class="cat-item sub-item ${isActive}" id="side-cat-${safeId}" onclick="scrollToCategorySection('${safeId}', '${sub}')">${translatedName}</div>`;
+        if (foodCats.length > 0) {
+            html += `<div class="cat-item main-group-header">🍽️ ${lbls.foodHeader}</div>`;
+            foodCats.forEach(cat => {
+                let catId = 'cat-section-' + cat.replace(/[^a-zA-Z0-9]/g, '_');
+                let isActive = cat === activeCategoryKey ? 'active' : '';
+                html += `<div class="cat-item sub-item ${isActive}" onclick="scrollToCategorySection('${catId}', '${cat}')">${translateCategoryName(cat)}</div>`;
             });
         }
 
-        if (coffeeCats.length > 0 || coldDrinkCats.length > 0) {
-            html += `<div class="cat-item main-group-header" style="margin-top:4px;" onclick="scrollToMainGroup('drink')">🧋 ${labels.drinkHeader}</div>`;
-            
-            if (coffeeCats.length > 0) {
-                html += `<div class="cat-item" style="font-weight:bold; color:#333; background:#fafafa; padding:6px 4px; font-size:11px; text-align:left; padding-left:10px;">☕ ${labels.coffeeSub}</div>`;
-                coffeeCats.forEach(sub => {
-                    let isActive = sub === activeCategoryKey ? 'active' : '';
-                    let safeId = encodeURIComponent(sub);
-                    let translatedName = translateCategoryName(sub);
-                    html += `<div class="cat-item sub-item ${isActive}" id="side-cat-${safeId}" onclick="scrollToCategorySection('${safeId}', '${sub}')" style="padding-left:18px;">${translatedName}</div>`;
-                });
-            }
-
-            if (coldDrinkCats.length > 0) {
-                html += `<div class="cat-item" style="font-weight:bold; color:#333; background:#fafafa; padding:6px 4px; font-size:11px; text-align:left; padding-left:10px;">🧃 ${labels.coldDrinkSub}</div>`;
-                coldDrinkCats.forEach(sub => {
-                    let isActive = sub === activeCategoryKey ? 'active' : '';
-                    let safeId = encodeURIComponent(sub);
-                    let translatedName = translateCategoryName(sub);
-                    html += `<div class="cat-item sub-item ${isActive}" id="side-cat-${safeId}" onclick="scrollToCategorySection('${safeId}', '${sub}')" style="padding-left:18px;">${translatedName}</div>`;
-                });
-            }
+        if (dessertCats.length > 0) {
+            html += `<div class="cat-item main-group-header" style="background:#fff3e0; color:#e65100; border-bottom-color:#ffe0b2;">🎂 ${lbls.dessertHeader}</div>`;
+            dessertCats.forEach(cat => {
+                let catId = 'cat-section-' + cat.replace(/[^a-zA-Z0-9]/g, '_');
+                let isActive = cat === activeCategoryKey ? 'active' : '';
+                html += `<div class="cat-item sub-item ${isActive}" onclick="scrollToCategorySection('${catId}', '${cat}')">${translateCategoryName(cat)}</div>`;
+            });
         }
 
-        container.innerHTML = html;  
+        if (drinkCats.length > 0) {
+            html += `<div class="cat-item main-group-header" style="background:#e1f5fe; color:#0288d1; border-bottom-color:#b3e5fc;">🧋 ${lbls.drinkHeader}</div>`;
+            drinkCats.forEach(cat => {
+                let catId = 'cat-section-' + cat.replace(/[^a-zA-Z0-9]/g, '_');
+                let isActive = cat === activeCategoryKey ? 'active' : '';
+                html += `<div class="cat-item sub-item ${isActive}" onclick="scrollToCategorySection('${catId}', '${cat}')">${translateCategoryName(cat)}</div>`;
+            });
+        }
+
+        sidebar.innerHTML = html;  
     }  
 
-    function scrollToMainGroup(groupType) {
-        let shopItems = db.menu.filter(m => String(m.shop || '').trim() === String(activeShopName || '').trim());
-        let presentCats = [...new Set(shopItems.map(m => getItemEffectiveCategory(m)).filter(Boolean))];
-
-        let dessertKeywords = ["အချိုပွဲ", "ကိတ်", "မုန့်", "dessert", "cake", "bakery", "蛋糕", "甜品", "ของหวาน"];
-        let drinkKeywords = ["သောက်စရာ", "ကော်ဖီ", "အအေး", "ဖျော်ရည်", "drink", "coffee", "tea", "juice", "น้ำ", "饮料", "奶茶", "咖啡", "เครื่องดื่ม"];
-
-        let targetCat = "";
-        if (groupType === 'food') {
-            targetCat = presentCats.find(c => !dessertKeywords.some(k => c.toLowerCase().includes(k)) && !drinkKeywords.some(k => c.toLowerCase().includes(k)));
-        } else if (groupType === 'dessert') {
-            targetCat = presentCats.find(c => dessertKeywords.some(k => c.toLowerCase().includes(k)));
-        } else if (groupType === 'drink') {
-            targetCat = presentCats.find(c => drinkKeywords.some(k => c.toLowerCase().includes(k)));
-        }
-
-        if (targetCat) {
-            let safeId = encodeURIComponent(targetCat);
-            scrollToCategorySection(safeId, targetCat);
-        }
-    }
-
-    function scrollToCategorySection(safeCatId, catName) {  
-        activeCategoryKey = catName;  
-        updateSidebarHighlight(safeCatId);  
-        let sectionEl = document.getElementById(`menu-cat-section-${safeCatId}`);  
-        if (sectionEl) {  
-            sectionEl.scrollIntoView({ behavior: 'smooth' });  
+    function scrollToCategorySection(sectionId, catKey) {  
+        activeCategoryKey = catKey;  
+        let elem = document.getElementById(sectionId);  
+        if (elem) {  
+            elem.scrollIntoView({ behavior: 'smooth', block: 'start' });  
         }  
-    }  
-
-    function updateSidebarHighlight(safeCatId) {  
-        document.querySelectorAll('.categories-sidebar .cat-item').forEach(el => el.classList.remove('active'));  
-        let activeEl = document.getElementById(`side-cat-${safeCatId}`);  
-        if (activeEl) activeEl.classList.add('active');  
+        renderShopCategories();  
     }  
 
     function onMenuScroll() {  
-        let shopItems = db.menu.filter(m => String(m.shop || '').trim() === String(activeShopName || '').trim());
-        let categories = [...new Set(shopItems.map(m => getItemEffectiveCategory(m)).filter(Boolean))];
+        let shopItems = db.menu.filter(m => String(m.shop || '').trim() === String(activeShopName || '').trim());  
+        let categories = [...new Set(shopItems.map(m => getItemEffectiveCategory(m)))];  
 
-        for (let catName of categories) {  
-            let safeCatId = encodeURIComponent(catName);
-            let sectionEl = document.getElementById(`menu-cat-section-${safeCatId}`);  
-            if (sectionEl) {  
-                let rect = sectionEl.getBoundingClientRect();  
+        for (let i = 0; i < categories.length; i++) {  
+            let cat = categories[i];  
+            let catId = 'cat-section-' + cat.replace(/[^a-zA-Z0-9]/g, '_');  
+            let elem = document.getElementById(catId);  
+            if (elem) {  
+                let rect = elem.getBoundingClientRect();  
                 if (rect.top >= 0 && rect.top <= 200) {  
-                    updateSidebarHighlight(safeCatId);  
+                    if (activeCategoryKey !== cat) {  
+                        activeCategoryKey = cat;  
+                        renderShopCategories();  
+                    }  
                     break;  
                 }  
             }  
@@ -1928,222 +1918,173 @@
     }  
 
     function renderShopItemsContinuous() {  
-        let t = translations[currentLang] || translations.my;  
-        let container = document.getElementById('shop-menu-items-list');  
-        let html = '';  
+        let area = document.getElementById('shop-menu-items-list');  
+        let shopItems = db.menu.filter(m => String(m.shop || '').trim() === String(activeShopName || '').trim());  
 
-        let shopItems = db.menu.filter(m => String(m.shop || '').trim() === String(activeShopName || '').trim());
-        let rawCategories = [...new Set(shopItems.map(m => getItemEffectiveCategory(m)).filter(Boolean))];
-
-        let dessertKeywords = ["အချိုပွဲ", "ကိတ်", "မုန့်", "dessert", "cake", "bakery", "蛋糕", "甜品", "ของหวาน"];
-        let coffeeKeywords = ["ကော်ဖီ", "coffee", "咖啡", "กาแฟ"];
-        let drinkKeywords = ["သောက်စရာ", "အအေး", "ဖျော်ရည်", "drink", "tea", "juice", "น้ำ", "饮料", "奶茶", "咖啡", "เครื่องดื่ม"];
-
-        let foodCats = [];
-        let dessertCats = [];
-        let coffeeCats = [];
-        let coldDrinkCats = [];
-
-        rawCategories.forEach(cat => {
-            let catLower = cat.toLowerCase();
-            if (dessertKeywords.some(k => catLower.includes(k))) {
-                dessertCats.push(cat);
-            } else if (coffeeKeywords.some(k => catLower.includes(k))) {
-                coffeeCats.push(cat);
-            } else if (drinkKeywords.some(k => catLower.includes(k))) {
-                coldDrinkCats.push(cat);
-            } else {
-                foodCats.push(cat);
-            }
-        });
-
-        let orderedCategories = [...foodCats, ...dessertCats, ...coffeeCats, ...coldDrinkCats];
-        let hasAnyItems = false;  
-
-        orderedCategories.forEach(catName => {  
-            let safeCatId = encodeURIComponent(catName);
-            let filteredItems = shopItems.filter(m => getItemEffectiveCategory(m) === catName);  
-
-            if (filteredItems.length > 0) {  
-                hasAnyItems = true;  
-                let headerTranslated = translateCategoryName(catName);
-                html += `<div id="menu-cat-section-${safeCatId}">  
-                    <div class="category-header">${headerTranslated}</div>`;  
-
-                filteredItems.forEach(item => {  
-                    let imgTag = item.image ? `<img src="${item.image}" class="menu-item-img" onclick="openImageModal('${item.image}')">` : `<div class="menu-item-img" style="display:flex; align-items:center; justify-content:center; font-size:20px;">🍲</div>`;  
-                    let displayTitle = getItemTitle(item);  
-                    let optionText = item.description ? `<span style="color:#e65100; font-size:11px; display:block; margin-bottom:4px; font-weight:bold;">📌 ${item.description}</span>` : '';  
-                      
-                    html += `<div class="menu-item-card">  
-                        <div class="menu-item-info">  
-                            ${imgTag}  
-                            <div>  
-                                <b style="font-size: 13px; display:block; margin-bottom:2px;">${displayTitle}</b>  
-                                ${optionText}  
-                                <b style="color:#d32f2f; font-size: 13px;">฿${item.price}</b>  
-                            </div>  
-                        </div>  
-                        <button class="add-btn" onclick="handleAddToCartClick(${item.id})">+</button>  
-                    </div>`;  
-                });  
-
-                html += `</div>`;  
-            }  
-        });  
-
-        if (!hasAnyItems) {  
-            html = `<div style="color: #666; font-size: 13px; padding: 20px; text-align: center;">${t.noItemsInShop}</div>`;  
+        if (shopItems.length === 0) {  
+            let t = translations[currentLang] || translations.my;
+            area.innerHTML = `<div style="color: #666; font-size: 13px; text-align: center; padding: 25px;">${t.noItemsInShop}</div>`;  
+            return;  
         }  
 
-        container.innerHTML = html;  
-    }  
+        let categories = [...new Set(shopItems.map(m => getItemEffectiveCategory(m)))];  
+        let html = '';  
 
-    function parseOptionsAndToppings(descText) {
-        if (!descText) return { meatOptions: [], addOns: [] };
-        
-        let meatOptions = [];
-        let addOns = [];
+        categories.forEach(cat => {  
+            let catId = 'cat-section-' + cat.replace(/[^a-zA-Z0-9]/g, '_');  
+            let itemsInCat = shopItems.filter(m => getItemEffectiveCategory(m) === cat);  
 
-        let meatMatch = descText.match(/([^{}\[\]:]+):\[(.*?)\]/);
-        if (meatMatch) {
-            let groupName = meatMatch[1].trim();
-            let optionsStr = meatMatch[2];
-            let opts = optionsStr.split(/[,၊]/);
-            opts.forEach(o => {
-                let pVal = 0;
-                let name = o.trim();
-                if (o.includes(':')) {
-                    let parts = o.split(':');
-                    name = parts[0].trim();
-                    pVal = parseFloat(parts[1].replace(/[^0-9.]/g, '')) || 0;
-                }
-                if (name) meatOptions.push({ group: groupName, name, price: pVal });
-            });
-            
-            descText = descText.replace(meatMatch[0], '');
-        }
+            html += `<div id="${catId}" class="category-header">${translateCategoryName(cat)}</div>`;  
 
-        let parts = descText.split(/[,၊]/);  
-        parts.forEach(p => {  
-            if (p.includes(':')) {  
-                let [name, priceStr] = p.split(':');  
-                let pVal = parseFloat(priceStr.replace(/[^0-9.]/g, '')) || 0;  
-                if (name.trim()) {  
-                    addOns.push({ name: name.trim(), price: pVal });  
-                }  
-            }  
+            itemsInCat.forEach(item => {  
+                let displayTitle = getItemTitle(item);  
+                let imageHtml = item.image   
+                    ? `<img src="${item.image}" class="menu-item-img" onclick="openImageModal('${item.image}')">`  
+                    : `<div class="menu-item-img" style="display: flex; align-items: center; justify-content: center; font-size: 10px; color: #888;">ပုံမရှိပါ</div>`;  
+
+                let descHtml = item.description ? `<div style="font-size: 11px; color: #666; margin-top: 2px;">${item.description}</div>` : '';  
+
+                html += `<div class="menu-item-card">  
+                    <div class="menu-item-info">  
+                        ${imageHtml}  
+                        <div>  
+                            <div style="font-size: 13px; font-weight: bold; color: #333;">${displayTitle}</div>  
+                            ${descHtml}  
+                            <div style="font-size: 13px; color: #d32f2f; font-weight: bold; margin-top: 3px;">฿${item.price}</div>  
+                        </div>  
+                    </div>  
+                    <button class="add-btn" onclick="handleAddToCartClick(${item.id})">+</button>  
+                </div>`;  
+            });  
         });  
 
-        return { meatOptions, addOns };
+        area.innerHTML = html;  
+    }  
+
+    function parseToppingOptions(descString) {
+        if (!descString) return [];
+        let optionsGroup = [];
+        
+        let customMatch = descString.match(/\[(.*?)\]/);
+        if (customMatch && customMatch[1]) {
+            let itemsStr = customMatch[1];
+            let rawParts = itemsStr.split(',');
+            let choices = [];
+
+            rawParts.forEach(part => {
+                let p = part.trim();
+                if (!p) return;
+                let price = 0;
+                let name = p;
+
+                if (p.includes(':+')) {
+                    let sp = p.split(':+');
+                    name = sp[0].trim();
+                    price = parseFloat(sp[1]) || 0;
+                } else if (p.includes('+')) {
+                    let sp = p.split('+');
+                    name = sp[0].trim();
+                    price = parseFloat(sp[1]) || 0;
+                }
+
+                choices.push({ name: name, price: price });
+            });
+
+            if (choices.length > 0) {
+                optionsGroup.push({
+                    title: "အသား / တွဲဖက် ရွေးချယ်ရန်",
+                    type: "single",
+                    choices: choices
+                });
+            }
+        }
+        return optionsGroup;
     }
 
     function handleAddToCartClick(itemId) {  
         let item = db.menu.find(m => m.id === itemId);  
         if (!item) return;  
 
-        if (isShopClosed(item.shop)) {  
-            alert(`⚠️ တောင်းပန်ပါတယ် Bro၊ "${getShopDisplayTitle(item.shop)}" ဆိုင်သည် ချိန်ကိုက်ပိတ်ထားချိန် ဖြစ်နေသောကြောင့် မှာယူ၍မရတော့ပါခဗျ။`);  
-            return;  
-        }  
+        let optionsGroup = parseToppingOptions(item.description);  
 
-        let parsed = parseOptionsAndToppings(item.description);  
-        if (parsed.meatOptions.length > 0 || parsed.addOns.length > 0 || (item.description && item.description.trim() !== '')) {  
+        if (optionsGroup.length > 0) {  
             pendingItemForTopping = item;  
-            selectedMeatOption = parsed.meatOptions.length > 0 ? parsed.meatOptions[0] : null;  
+            selectedMeatOption = optionsGroup[0].choices[0]; 
             selectedToppings = [];  
-            openToppingModal(item, parsed);  
+            renderToppingModal(optionsGroup);  
+            document.getElementById('toppingModal').style.display = 'flex';  
         } else {  
-            addToCartDirect(item, null, []);  
+            addToCartDirectly(item, [], null, item.price);  
         }  
     }  
 
-    function openToppingModal(item, parsed) {  
-        document.getElementById('topping-item-name').innerText = getItemTitle(item);  
-        document.getElementById('topping-item-base-price').innerText = `฿${item.price}`;
+    function selectMeatOption(name, price) {
+        selectedMeatOption = { name: name, price: price };
+        updateModalCalculatedPrice();
         
-        let thumbEl = document.getElementById('modal-item-thumb');
-        if (item.image) {
-            thumbEl.src = item.image;
-            thumbEl.style.display = 'block';
+        document.querySelectorAll('.option-choice-btn').forEach(btn => {
+            btn.classList.remove('selected');
+            if (btn.getAttribute('data-name') === name) {
+                btn.classList.add('selected');
+            }
+        });
+    }
+
+    function updateModalCalculatedPrice() {
+        if (!pendingItemForTopping) return;
+        let basePrice = parseFloat(pendingItemForTopping.price) || 0;
+        let extraMeat = selectedMeatOption ? (parseFloat(selectedMeatOption.price) || 0) : 0;
+        let extraTopping = selectedToppings.reduce((sum, t) => sum + (parseFloat(t.price) || 0), 0);
+        
+        let total = basePrice + extraMeat + extraTopping;
+        document.getElementById('modal-calculated-total').innerText = `฿${total}`;
+    }
+
+    function renderToppingModal(optionsGroup) {  
+        document.getElementById('topping-item-name').innerText = getItemTitle(pendingItemForTopping);  
+        document.getElementById('topping-item-base-price').innerText = `฿${pendingItemForTopping.price}`;  
+
+        let imgThumb = document.getElementById('modal-item-thumb');
+        if (pendingItemForTopping.image) {
+            imgThumb.src = pendingItemForTopping.image;
+            imgThumb.style.display = 'block';
         } else {
-            thumbEl.style.display = 'none';
+            imgThumb.style.display = 'none';
         }
 
         let container = document.getElementById('topping-list-container');  
         let html = '';  
 
-        if (parsed.meatOptions.length > 0) {
-            let groupTitle = parsed.meatOptions[0].group || 'အသားရွေးရန်';
-            html += `<div style="margin-bottom: 12px;">
-                <div style="font-size: 13px; font-weight: bold; color: #333;">
-                    ${groupTitle} <span class="option-tag-req" style="font-size: 10px; background: #ffebee; color: #d32f2f; padding: 2px 6px; border-radius: 4px;">မဖြစ်မနေ</span>
-                </div>
-                <div style="font-size: 11px; color: #888; margin-top: 2px;">ရွေးရန်လို • ၁ ခုရွေးပါ</div>
+        optionsGroup.forEach(group => {
+            html += `<div style="margin-top:10px;">
+                <div style="font-size:12px; font-weight:bold; color:#333;">${group.title} <span class="option-tag-req">၁ ခုရွေးရန်</span></div>
                 <div class="option-choice-grid">`;
-            
-            parsed.meatOptions.forEach((opt, idx) => {
-                let isSel = (selectedMeatOption && selectedMeatOption.name === opt.name) ? 'selected' : '';
-                let priceTxt = opt.price > 0 ? ` +฿${opt.price}` : '';
-                html += `<div class="option-choice-btn ${isSel}" onclick="selectMeatOption('${opt.name}', ${opt.price}, '${opt.group}')">${opt.name}${priceTxt}</div>`;
+
+            group.choices.forEach((choice, idx) => {
+                let isSelected = (selectedMeatOption && selectedMeatOption.name === choice.name) || (idx === 0);
+                if (idx === 0 && !selectedMeatOption) selectedMeatOption = choice;
+
+                let priceAddonText = choice.price > 0 ? ` (+฿${choice.price})` : '';
+                html += `<div class="option-choice-btn ${isSelected ? 'selected' : ''}" data-name="${choice.name}" onclick="selectMeatOption('${choice.name}', ${choice.price})">
+                    ${choice.name}${priceAddonText}
+                </div>`;
             });
 
             html += `</div></div>`;
-        }
-
-        if (parsed.addOns.length > 0) {
-            html += `<div style="margin-bottom: 10px;">
-                <div style="font-size: 13px; font-weight: bold; color: #333; margin-bottom: 6px;">ထပ်ပေါင်းစရာများ (Add-ons)</div>`;
-            
-            parsed.addOns.forEach((top, idx) => {  
-                html += `<div class="topping-item">  
-                    <label style="font-size: 13px; cursor:pointer; display:flex; align-items:center; gap:8px;">  
-                        <input type="checkbox" onchange="toggleToppingSelection(${idx}, '${top.name}', ${top.price}, this.checked)">  
-                        <b>${top.name}</b>  
-                    </label>  
-                    <b style="color:#d32f2f;">+฿${top.price}</b>  
-                </div>`;  
-            });
-            html += `</div>`;
-        }
-
-        if (parsed.meatOptions.length === 0 && parsed.addOns.length === 0) {
-            html += `<div style="font-size: 12px; color: #666; text-align: center; padding: 10px;">${item.description}</div>`;
-        }
+        });
 
         container.innerHTML = html;  
         updateModalCalculatedPrice();
-        document.getElementById('toppingModal').style.display = 'flex';  
     }  
 
-    function selectMeatOption(name, price, group) {
-        selectedMeatOption = { name, price, group };
-        document.querySelectorAll('.option-choice-btn').forEach(btn => {
-            btn.classList.remove('selected');
-            if (btn.innerText.includes(name)) {
-                btn.classList.add('selected');
-            }
-        });
-        updateModalCalculatedPrice();
-    }
-
-    function toggleToppingSelection(idx, name, price, isChecked) {  
+    function toggleToppingSelection(name, price, isChecked) {  
         if (isChecked) {  
-            selectedToppings.push({ name, price });  
+            selectedToppings.push({ name: name, price: price });  
         } else {  
             selectedToppings = selectedToppings.filter(t => t.name !== name);  
         }  
         updateModalCalculatedPrice();
     }  
-
-    function updateModalCalculatedPrice() {
-        if (!pendingItemForTopping) return;
-        let base = pendingItemForTopping.price;
-        let meatExtra = selectedMeatOption ? selectedMeatOption.price : 0;
-        let toppingExtra = selectedToppings.reduce((sum, t) => sum + t.price, 0);
-        let total = base + meatExtra + toppingExtra;
-        document.getElementById('modal-calculated-total').innerText = `฿${total}`;
-    }
 
     function closeToppingModal() {  
         document.getElementById('toppingModal').style.display = 'none';  
@@ -2153,213 +2094,147 @@
     }  
 
     function confirmAddToCartWithToppings() {  
-        if (pendingItemForTopping) {  
-            let parsed = parseOptionsAndToppings(pendingItemForTopping.description);
-            if (parsed.meatOptions.length > 0 && !selectedMeatOption) {
-                alert('ကျေးဇူးပြု၍ အသားအမျိုးအစား ၁ ခု မဖြစ်မနေ ရွေးချယ်ပေးပါရန်!');
-                return;
-            }
-            addToCartDirect(pendingItemForTopping, selectedMeatOption, selectedToppings);  
-            closeToppingModal();  
-        }  
+        if (!pendingItemForTopping) return;  
+
+        let basePrice = parseFloat(pendingItemForTopping.price) || 0;  
+        let extraMeat = selectedMeatOption ? (parseFloat(selectedMeatOption.price) || 0) : 0;
+        let extraTopping = selectedToppings.reduce((sum, t) => sum + (parseFloat(t.price) || 0), 0);  
+
+        let finalUnitPrice = basePrice + extraMeat + extraTopping;  
+
+        let combinedToppings = [];
+        if (selectedMeatOption) combinedToppings.push(selectedMeatOption);
+        combinedToppings = combinedToppings.concat(selectedToppings);
+
+        addToCartDirectly(pendingItemForTopping, combinedToppings, null, finalUnitPrice);  
+        closeToppingModal();  
     }  
 
-    function addToCartDirect(item, meatOpt, toppingsList) {  
+    function addToCartDirectly(item, toppingsArr, customNote, finalUnitPrice) {  
         let displayTitle = getItemTitle(item);  
-        let meatExtra = meatOpt ? meatOpt.price : 0;
-        let toppingExtra = toppingsList.reduce((sum, t) => sum + t.price, 0);  
-        let finalPrice = item.price + meatExtra + toppingExtra;  
-        
-        let optionDetails = [];
-        if (meatOpt) optionDetails.push(`${meatOpt.name}${meatOpt.price > 0 ? '(+฿'+meatOpt.price+')' : ''}`);
-        toppingsList.forEach(t => optionDetails.push(`${t.name}(+฿${t.price})`));
+        let toppingText = (toppingsArr && toppingsArr.length > 0)   
+            ? toppingsArr.map(t => t.price > 0 ? `${t.name}(+฿${t.price})` : t.name).join(', ')  
+            : '';  
 
-        let toppingText = optionDetails.join(', ');  
+        let unitPrice = (finalUnitPrice !== undefined) ? finalUnitPrice : item.price;  
 
         let existing = db.cart.find(c => c.id === item.id && c.toppingText === toppingText);  
+
         if (existing) {  
             existing.qty += 1;  
         } else {  
-            db.cart.push({   
-                ...item,   
-                displayTitle,   
-                price: finalPrice,   
-                toppingText,   
-                customNote: '',   
-                qty: 1   
+            db.cart.push({  
+                id: item.id,  
+                shop: item.shop,  
+                displayTitle: displayTitle,  
+                unitPrice: unitPrice,  
+                toppingText: toppingText,  
+                customNote: customNote || '',  
+                qty: 1  
             });  
         }  
-        updateCartUI();   
 
         let t = translations[currentLang] || translations.my;
-        let alertMsg = t.addedToCartMsg.replace('{title}', displayTitle);
-        alert(alertMsg);  
+        let msg = t.addedToCartMsg.replace('{title}', displayTitle);
+        alert(msg);  
+        renderCart();  
     }  
 
-    function renderAll() {  
-        renderShopsList();  
-        updateCartUI();  
-        renderOrders();  
-        renderAdminShops();  
-        renderAdminAllOrders();  
-    }  
-
-    function renderShopsList() {  
-        let t = translations[currentLang] || translations.my;  
-        let featuredItems = db.menu.filter(m => !!m.isFeatured);
-        let shopFeaturedMap = {};
-        featuredItems.forEach(item => {
-            if (!shopFeaturedMap[item.shop]) {
-                shopFeaturedMap[item.shop] = [];
-            }
-            shopFeaturedMap[item.shop].push(item);
-        });
-
-        let featuredShops = Object.keys(shopFeaturedMap);
-        let html = '';  
-        if (featuredShops.length === 0) {  
-            html = `<div style="color: #666; font-size: 12px; text-align: center; padding: 20px; background: white; border-radius: 10px;">${t.noFeaturedItems}</div>`;  
-        } else {  
-            featuredShops.forEach(shop => {  
-                let displayShopName = getShopDisplayTitle(shop);  
-                let logoImg = db.shopLogos[shop] ? `<img src="${db.shopLogos[shop]}" class="shop-logo">` : `<div class="shop-logo">🛍️</div>`;  
-                let closed = isShopClosed(shop);  
-                let shopItems = shopFeaturedMap[shop]; 
-                let featuredItemsHtml = '';
-                
-                shopItems.forEach(item => {
-                    let itemImg = item.image ? `<img src="${item.image}" class="featured-item-img" onclick="openImageModal('${item.image}')">` : `<div class="featured-item-img" style="display:flex; align-items:center; justify-content:center; font-size:18px;">🍲</div>`;
-                    let itemTitle = getItemTitle(item);
-                    featuredItemsHtml += `
-                        <div class="featured-item-box">
-                            <div>
-                                ${itemImg}
-                                <div class="featured-item-title">${itemTitle}</div>
-                            </div>
-                            <div class="featured-item-bottom">
-                                <span class="featured-item-price">฿${item.price}</span>
-                                <button class="mini-add-btn" onclick="handleAddToCartClick(${item.id})">+</button>
-                            </div>
-                        </div>
-                    `;
-                });
-
-                html += `
-                    <div class="shop-showcase-card">
-                        <div class="shop-header-row">
-                            <div class="shop-info-left" onclick="openShopMenu('${shop}')" style="cursor:pointer;">  
-                                ${logoImg}  
-                                <div>  
-                                    <div class="shop-name-txt">${displayShopName}</div>  
-                                    ${closed ? '<span style="font-size:11px; color:#f44336;">(ပိတ်ထားသည်)</span>' : '<span style="font-size:11px; color:#4CAF50;">🟢 ဖွင့်ထားသည်</span>'}  
-                                </div>  
-                            </div>  
-                            <button class="view-menu-link" onclick="openShopMenu('${shop}')">${t.viewMenuBtn}</button>
-                        </div>
-                        <div class="featured-items-scroll">
-                            ${featuredItemsHtml}
-                        </div>
-                    </div>
-                `;  
-            });  
+    function updateCartItemNote(index, noteVal) {  
+        if (db.cart[index]) {  
+            db.cart[index].customNote = noteVal.trim();  
         }  
-        document.getElementById('shops-grid-container').innerHTML = html;  
     }  
 
-    function changeQty(index, delta) {  
-        db.cart[index].qty += delta;  
-        if (db.cart[index].qty <= 0) db.cart.splice(index, 1);  
-        updateCartUI();  
-    }  
-
-    function updateItemCartNote(index, val) {
-        if (db.cart[index]) {
-            db.cart[index].customNote = val.trim();
-        }
-    }
-
-    function updateCartUI() {  
-        let t = translations[currentLang] || translations.my;  
+    function renderCart() {  
         let container = document.getElementById('cart-items-container');  
         if (db.cart.length === 0) {  
-            container.innerHTML = `<div style="color: #666; font-size: 13px; text-align:center; padding:15px;">${t.emptyCart}</div>`;  
+            let t = translations[currentLang] || translations.my;
+            container.innerHTML = `<div style="color: #666; font-size: 13px; text-align: center; padding: 25px;">${t.emptyCart}</div>`;  
             document.getElementById('cart-subtotal').innerText = '฿0';  
             document.getElementById('cart-tax').innerText = '฿0';  
             document.getElementById('cart-total-text').innerText = '฿0';  
             return;  
         }  
-        let html = '';  
+
         let subtotal = 0;  
-        db.cart.forEach((item, idx) => {  
-            let itemTotal = item.price * item.qty;  
+        let html = '';  
+
+        let t = translations[currentLang] || translations.my;
+
+        db.cart.forEach((c, idx) => {  
+            let itemTotal = c.unitPrice * c.qty;  
             subtotal += itemTotal;  
-            let thumbHtml = item.image ? `<img src="${item.image}" style="width:35px; height:35px; object-fit:cover; border-radius:4px; vertical-align:middle; margin-right:5px;">` : '';  
-            let optHtml = item.toppingText ? `<br><span style="color:#e65100; font-size:10px;">(+${item.toppingText})</span>` : '';  
-              
-            html += `<div style="padding: 10px 0; border-bottom: 1px solid #eee; font-size: 13px;">  
-                <div style="display: flex; justify-content: space-between; align-items:center;">
-                    <div style="display:flex; align-items:center;">  
-                        ${thumbHtml}  
-                        <div>  
-                            <b>${item.displayTitle}</b> <span style="color:#d32f2f; font-size:11px;">(${getShopDisplayTitle(item.shop)})</span>${optHtml}<br>  
-                            <span style="color:#666; font-size:11px;">฿${item.price} — ${item.qty} = <b>฿${itemTotal}</b></span>  
-                        </div>  
+
+            let toppingBadge = c.toppingText   
+                ? `<div style="font-size: 11px; color: #d32f2f; margin-top: 2px;">📌 ${c.toppingText}</div>`   
+                : '';  
+
+            html += `<div style="padding: 10px 0; border-bottom: 1px solid #eee;">  
+                <div style="display: flex; justify-content: space-between; align-items: flex-start;">  
+                    <div>  
+                        <div style="font-size: 13px; font-weight: bold; color: #333;">${c.displayTitle}</div>  
+                        <div style="font-size: 11px; color: #666;">${getShopDisplayTitle(c.shop)}</div>  
+                        ${toppingBadge}  
+                        <div style="font-size: 12px; color: #d32f2f; font-weight: bold; margin-top: 2px;">฿${c.unitPrice}</div>  
                     </div>  
-                    <div style="display:flex; align-items:center; gap:8px;">  
-                        <button style="background:#ddd; border:none; width:22px; height:22px; border-radius:4px; font-weight:bold; cursor:pointer;" onclick="changeQty(${idx}, -1)">-</button>  
-                        <span style="font-weight:bold; font-size:13px;">${item.qty}</span>  
-                        <button style="background:#d32f2f; color:white; border:none; width:22px; height:22px; border-radius:4px; font-weight:bold; cursor:pointer;" onclick="changeQty(${idx}, 1)">+</button>  
+                    <div style="display: flex; align-items: center; gap: 8px;">  
+                        <button style="background:#eee; border:none; width:24px; height:24px; border-radius:4px; font-weight:bold; cursor:pointer;" onclick="changeCartQty(${idx}, -1)">-</button>  
+                        <span style="font-size: 13px; font-weight: bold;">${c.qty}</span>  
+                        <button style="background:#eee; border:none; width:24px; height:24px; border-radius:4px; font-weight:bold; cursor:pointer;" onclick="changeCartQty(${idx}, 1)">+</button>  
                     </div>  
-                </div>
-                <input type="text" class="item-note-input" value="${item.customNote || ''}" placeholder="${t.itemNotePh}" oninput="updateItemCartNote(${idx}, this.value)">
+                </div>  
+                <input type="text" class="item-note-input" value="${c.customNote || ''}" placeholder="${t.itemNotePh}" onchange="updateCartItemNote(${idx}, this.value)">  
             </div>`;  
         });  
+
         container.innerHTML = html;  
 
         let tax = subtotal * 0.05;  
         let total = subtotal + tax;  
 
-        document.getElementById('cart-subtotal').innerText = `฿${subtotal.toFixed(1)}`;  
-        document.getElementById('cart-tax').innerText = `฿${tax.toFixed(1)}`;  
-        document.getElementById('cart-total-text').innerText = `฿${total.toFixed(1)}`;  
+        document.getElementById('cart-subtotal').innerText = `฿${subtotal.toFixed(2)}`;  
+        document.getElementById('cart-tax').innerText = `฿${tax.toFixed(2)}`;  
+        document.getElementById('cart-total-text').innerText = `฿${total.toFixed(2)}`;  
     }  
 
-    function sendOrderToTelegramGroup(orderMsg, customerPhone) {  
-        let cleanPhone = customerPhone.replace(/[^0-9]/g, '');  
-        let customerTgLink = `https://t.me/+${cleanPhone}`;  
-
-        let payload = {  
-            chat_id: TELEGRAM_GROUP_ID,  
-            text: orderMsg,  
-            reply_markup: {  
-                inline_keyboard: [  
-                    [  
-                        { text: "💬 Customer ထံ ဆက်သွယ်ရန်", url: customerTgLink }  
-                    ]  
-                ]  
+    function changeCartQty(index, delta) {  
+        if (db.cart[index]) {  
+            db.cart[index].qty += delta;  
+            if (db.cart[index].qty <= 0) {  
+                db.cart.splice(index, 1);  
             }  
-        };  
-
-        fetch(`https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage`, {  
-            method: 'POST',  
-            headers: { 'Content-Type': 'application/json' },  
-            body: JSON.stringify(payload)  
-        }).then(res => res.json()).then(data => {  
-            console.log("Group ထံသို့ အော်ဒါပို့ပြီးပါပြီ:", data);  
-        }).catch(err => {  
-            console.error("Group ထံသို့ ပို့ရာတွင် အားနည်းချက်ရှိပါသည်:", err);  
-        });  
+            renderCart();  
+        }  
     }  
+
+    function sanitizeForTelegramMarkdown(text) {
+        if (!text) return '';
+        return text
+            .replace(/_/g, '\\_')
+            .replace(/\*/g, '\\*')
+            .replace(/\[/g, '\\[')
+            .replace(/\]/g, '\\]')
+            .replace(/\(/g, '\\(')
+            .replace(/\)/g, '\\)')
+            .replace(/~/g, '\\~')
+            .replace(/`/g, '\\`')
+            .replace(/>/g, '\\>')
+            .replace(/#/g, '\\#')
+            .replace(/\+/g, '\\+')
+            .replace(/-/g, '\\-')
+            .replace(/=/g, '\\=')
+            .replace(/\|/g, '\\|')
+            .replace(/\{/g, '\\{')
+            .replace(/\}/g, '\\}')
+            .replace(/\./g, '\\.')
+            .replace(/!/g, '\\!');
+    }
 
     function checkoutOrder(platform) {  
-        let t = translations[currentLang] || translations.my;  
-        if (db.cart.length === 0) { alert(t.emptyCart); return; }  
-          
-        for (let i = 0; i < db.cart.length; i++) {  
-            if (isShopClosed(db.cart[i].shop)) {  
-                alert(`⚠️ တောင်းပန်ပါတယ် Bro၊ "${getShopDisplayTitle(db.cart[i].shop)}" ဆိုင်သည် ချိန်ကိုက်ပိတ်ထားချိန် ဖြစ်နေပါသဖြင့် မှာယူ၍ မရနိုင်ပါ။`);  
-                return;  
-            }  
+        if (db.cart.length === 0) {  
+            alert('ခြင်းတောင်းထဲတွင် မီနူးများ မရှိသေးပါ။');  
+            return;  
         }  
 
         let phone = document.getElementById('customer-phone').value.trim();  
@@ -2367,7 +2242,12 @@
         let mapLink = document.getElementById('customer-map').value.trim();  
         let note = document.getElementById('customer-note').value.trim();  
 
-        if (!phone || (!address && !mapLink)) {  
+        if (!phone) {  
+            alert('ကျေးဇူးပြု၍ Telegram ဆက်သွယ်၍ရမည့် ဖုန်းနံပါတ်အမှန် ထည့်သွင်းပေးပါရန်!');  
+            return;  
+        }  
+
+        if (!address && !mapLink) {  
             alert('ကျေးဇူးပြု၍ ဖုန်းနံပါတ်နှင့်တကွ လိပ်စာ (သို့) Google Map လင့်ခ် တစ်ခုခုကို ထည့်သွင်းပေးပါ!');  
             return;  
         }  
@@ -2376,183 +2256,286 @@
         localStorage.setItem('tachileik_customer_address', address);  
         localStorage.setItem('tachileik_customer_map', mapLink);  
 
-        let shopsInCart = [...new Set(db.cart.map(i => getShopDisplayTitle(i.shop)))];  
-        let subtotal = db.cart.reduce((sum, i) => sum + (i.price * i.qty), 0);  
+        let orderNum = db.orders.length + 1;  
+        let subtotal = db.cart.reduce((sum, c) => sum + (c.unitPrice * c.qty), 0);  
         let tax = subtotal * 0.05;  
         let total = subtotal + tax;  
 
-        let now = new Date();  
-        let currentMonthStr = now.getFullYear() + '-' + String(now.getMonth() + 1).padStart(2, '0');
+        let newOrder = {  
+            id: `#${orderNum}`,  
+            items: JSON.parse(JSON.stringify(db.cart)),  
+            subtotal: subtotal.toFixed(2),  
+            tax: tax.toFixed(2),  
+            total: total.toFixed(2),  
+            phone: phone,  
+            address: address || 'မထည့်ပါ',  
+            mapLink: mapLink || 'မထည့်ပါ',  
+            note: note || 'မရှိပါ',  
+            status: 'Pending',  
+            dateStr: new Date().toLocaleString(),  
+            timestamp: new Date().getTime()  
+        };  
 
-        let nextId = 1;
-        if (db.orders && db.orders.length > 0) {
-            let currentMonthOrders = db.orders.filter(o => o.orderMonth === currentMonthStr);
-            if (currentMonthOrders.length > 0) {
-                let maxId = Math.max(...currentMonthOrders.map(o => parseInt(o.id) || 0));
-                if (!isNaN(maxId) && maxId > 0) {
-                    nextId = maxId + 1;
-                }
-            }
-        }
-        let orderId = nextId;
+        db.orders.unshift(newOrder);  
+        saveDataAsync();  
 
-        let dateStr = now.toLocaleDateString('my-MM', { year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit' });  
+        let cleanPhone = phone.replace(/[^0-9]/g, '');
+        let cleanTgPhoneLink = cleanPhone ? `https://t.me/+${cleanPhone}` : '';
 
-        let itemsText = db.cart.map(i => {
-            let noteText = i.customNote ? `\n   👉 မှတ်စု: ${i.customNote}` : '';
-            let toppingStr = i.toppingText ? `[${i.toppingText}] ` : '';
-            
-            let myTitle = i.titleMy || i.title || '';
-            let displayTitleWithMy = (i.displayTitle !== myTitle && myTitle) 
-                ? `${i.displayTitle} (${myTitle})` 
-                : i.displayTitle;
-
-            return `• ${displayTitleWithMy} ${toppingStr}x ${i.qty} = ฿${i.price * i.qty}${noteText}`;
-        }).join('\n');  
+        let tgMsg = `🛒 *Tachileik Delivery (大其力跑腿)*\n`;  
+        tgMsg += `🍔 *NEW FOOD ORDER - 大其力跑腿8888*\n\n`;  
+        tgMsg += `🆔 *အော်ဒါနံပါတ်:* #${orderNum}\n\n`;  
           
-        let orderMsg = `🛒 NEW FOOD ORDER - 大其力跑腿8888\n\n` +  
-                       `🆔 အော်ဒါနံပါတ်: #${orderId}\n` +
-                       `📅 နေ့စွဲ: ${dateStr}\n` +  
-                       `🛍️ ဆိုင်အမည်: ${shopsInCart.join(', ')}\n` +  
-                       `📦 မှာထားသည့်ပစ္စည်းများ:\n${itemsText}\n\n` +  
-                       `💷 Subtotal: ฿${subtotal.toFixed(1)}\n` +  
-                       `📊 5% Service Fee: ฿${tax.toFixed(1)}\n` +  
-                       `🛵 ပို့ဆောင်ခ (Delivery): _____\n` +  
-                       `💰 ကျသင့်ငွေစုစုပေါင်း (Total): ฿${total.toFixed(1)}\n\n` +  
-                       `📞 ဖုန်းနံပါတ်: ${phone}\n` +  
-                       `📍 လိပ်စာ: ${address || 'မထည့်ပါ'}\n` +  
-                       `🗺️ Map Link: ${mapLink || 'မထည့်ပါ'}\n` +  
-                       `💬 အထွေထွေမှတ်စု: ${note || 'မရှိပါ။'}`;  
-          
-        db.orders.unshift({   
-            id: orderId,
-            orderMonth: currentMonthStr,
-            dateStr: dateStr,  
-            timestamp: now.getTime(),  
-            items: [...db.cart],   
-            total: total.toFixed(1),   
-            phone,   
-            address: address,   
-            mapLink: mapLink,  
-            note,   
-            status: 'Pending'   
+        db.cart.forEach((c, idx) => {  
+            tgMsg += `${idx + 1}. *${c.displayTitle}* x ${c.qty} = ฿${(c.unitPrice * c.qty).toFixed(2)}\n`;  
+            tgMsg += `   🏪 *ဆိုင်:* ${getShopDisplayTitle(c.shop)}\n`;  
+            if (c.toppingText) tgMsg += `   📌 *အသား/Toppings:* ${c.toppingText}\n`;  
+            if (c.customNote) tgMsg += `   ✏️ *မှတ်စု:* ${c.customNote}\n`;  
         });  
 
-        saveDataAsync();  
-        sendOrderToTelegramGroup(orderMsg, phone);  
-
-        db.cart = [];  
-        updateCartUI();  
-        renderOrders();  
-        switchTab(2);  
+        tgMsg += `\n📊 *Subtotal:* ฿${subtotal.toFixed(2)}\n`;  
+        tgMsg += `📊 *5% Service Fee:* ฿${tax.toFixed(2)}\n`;  
+        tgMsg += `🛵 *ပို့ဆောင်ခ (Delivery):* ______\n`;  
+        tgMsg += `💰 *ကျသင့်ငွေစုစုပေါင်း (Total):* *฿${total.toFixed(2)}*\n\n`;  
+        tgMsg += `📞 *ဖုန်းနံပါတ်:* ${phone}\n`;  
+        tgMsg += `📍 *လိပ်စာ:* ${address || 'မထည့်ပါ'}\n`;  
+        tgMsg += `🗺️ *Map Link:* ${mapLink || 'မထည့်ပါ'}\n`;  
+        tgMsg += `💬 *အထွေထွေမှတ်စု:* ${note || 'မရှိပါ'}\n`;  
 
         if (platform === 'telegram') {  
-            window.open(`https://t.me/${adminTelegramUser}?text=` + encodeURIComponent(orderMsg), '_blank');  
+            let botUrl = `https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage`;  
+              
+            let replyMarkup = null;
+            if (cleanTgPhoneLink) {
+                replyMarkup = {  
+                    inline_keyboard: [  
+                        [{ text: "💬 Customer ထံ ဆက်သွယ်ရန်", url: cleanTgPhoneLink }]  
+                    ]  
+                };  
+            }
+
+            let payload = {  
+                chat_id: TELEGRAM_GROUP_ID,  
+                text: tgMsg,  
+                parse_mode: 'Markdown'  
+            };
+
+            if (replyMarkup) {
+                payload.reply_markup = replyMarkup;
+            }
+
+            fetch(botUrl, {  
+                method: 'POST',  
+                headers: { 'Content-Type': 'application/json' },  
+                body: JSON.stringify(payload)  
+            }).then(res => {  
+                db.cart = [];  
+                renderCart();  
+                renderOrders();  
+                alert('အော်ဒါကို Telegram သို့ အောင်မြင်စွာ ပေးပို့လိုက်ပါပြီ!');  
+                switchTab(2);  
+            }).catch(err => {  
+                console.error(err);  
+                let plainTextMsg = tgMsg.replace(/\*/g, '');
+                let fallbackUrl = `https://t.me/${adminTelegramUser}?text=` + encodeURIComponent(plainTextMsg);  
+                window.open(fallbackUrl, '_blank');  
+                db.cart = [];  
+                renderCart();  
+                renderOrders();  
+                switchTab(2);  
+            });  
         } else if (platform === 'wechat') {  
-            navigator.clipboard.writeText(orderMsg).then(() => {  
-                alert('အော်ဒါစာသား ကူးယူပြီးပါပြီ။ WeChat (ID: ' + adminWeChatId + ') သို့ ပို့ပါ');  
+            let plainTextMsg = tgMsg.replace(/\*/g, '');
+            navigator.clipboard.writeText(plainTextMsg).then(() => {  
+                alert(`အော်ဒါအချက်အလက်များကို Copy ကူးပြီးပါပြီ! WeChat ပွင့်လာပါက တိုက်ရိုက် Paste လုပ်ပြီး စာပို့ပေးပါခင်ဗျာ။`);  
+                db.cart = [];  
+                renderCart();  
+                renderOrders();  
+                switchTab(2);  
+            }).catch(() => {  
+                prompt("အောက်ပါစာသားကို ကူးယူ၍ WeChat သို့ ပို့ပေးပါ:", plainTextMsg);  
+                db.cart = [];  
+                renderCart();  
+                renderOrders();  
+                switchTab(2);  
             });  
         }  
     }  
 
     function renderOrders() {  
-        let t = translations[currentLang] || translations.my;  
-        let container1 = document.getElementById('my-orders-list');  
-        cleanOldOrders();  
-
-        let savedPhone = localStorage.getItem('tachileik_customer_phone') || '';  
-        let myOrders = db.orders.filter(o => !savedPhone || o.phone === savedPhone);  
-
-        if (myOrders.length === 0) {  
-            container1.innerHTML = `<div style="color: #666; font-size: 13px; background: white; padding: 15px; border-radius: 8px; text-align:center;">${t.noOrders}</div>`;  
+        let container = document.getElementById('my-orders-list');  
+        if (db.orders.length === 0) {  
+            let t = translations[currentLang] || translations.my;
+            container.innerHTML = `<div style="color: #666; font-size: 13px; text-align: center; padding: 25px; background: white; border-radius: 10px;">${t.noOrders}</div>`;  
             return;  
         }  
+
         let html = '';  
-        myOrders.forEach(o => {  
-            let statusBadge = o.status === 'Pending' ? '🟡 စောင့်ဆိုင်းဆဲ' : (o.status === 'Delivering' ? '🔵 ပို့ဆောင်နေဆဲ' : '🟢 ပြီးဆုံးပြီး');  
-            html += `<div class="card" style="margin-bottom:8px; border-left: 4px solid #d32f2f;">  
-                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:4px;">  
-                    <b>Order #${o.id}</b>  
-                    <span style="font-size:11px; color:#888;">📅 ${o.dateStr || 'မသိရပါ'}</span>  
+        db.orders.forEach(o => {  
+            let statusBadge = o.status === 'Pending'   
+                ? '<span style="color:#ff9800; font-weight:bold;">🟡 စောင့်ဆိုင်းဆဲ</span>'   
+                : (o.status === 'Delivering' ? '<span style="color:#2196F3; font-weight:bold;">🔵 ပို့ဆောင်နေဆဲ</span>' : '<span style="color:#4CAF50; font-weight:bold;">🟢 ပြီးဆုံးပြီး</span>');  
+
+            html += `<div class="card" style="margin-bottom: 10px;">  
+                <div style="display: flex; justify-content: space-between; margin-bottom: 6px; border-bottom: 1px solid #eee; padding-bottom: 5px;">  
+                    <b>Order ${o.id}</b>  
+                    ${statusBadge}  
                 </div>  
-                <div>အခြေအနေ: <b style="color: #d32f2f;">${statusBadge}</b></div>  
-                <span style="font-size: 12px; color: #666;">Items: ${o.items.map(i => `${i.displayTitle}${i.toppingText ? '['+i.toppingText+']' : ''}${i.customNote ? ' ('+i.customNote+')' : ''} (${getShopDisplayTitle(i.shop)}) x${i.qty}`).join(', ')}</span><br>  
-                <span style="font-size: 11px; color: #888;">ဖုန်း: ${o.phone} | နေရပ်: ${o.address}</span><br>  
-                <div style="margin-top: 5px; font-weight: bold; color: #d32f2f;">Total: ฿${o.total}</div>  
+                <div style="font-size: 11px; color: #888; margin-bottom: 6px;">⏰ ${o.dateStr}</div>  
+                <div style="font-size: 12px; margin-bottom: 6px;">  
+                    ${o.items.map(i => `<div>- ${i.displayTitle} ${i.toppingText ? '['+i.toppingText+']' : ''} x${i.qty} (${getShopDisplayTitle(i.shop)})</div>`).join('')}  
+                </div>  
+                <div style="display: flex; justify-content: space-between; font-weight: bold; color: #d32f2f; border-top: 1px dashed #eee; padding-top: 5px;">  
+                    <span>Total:</span>  
+                    <span>฿${o.total}</span>  
+                </div>  
             </div>`;  
         });  
-        container1.innerHTML = html;  
+
+        container.innerHTML = html;  
     }  
 
-    function handleExcelImport(event) {  
-        let file = event.target.files[0];  
+    function renderShopsList() {  
+        let container = document.getElementById('shops-grid-container');  
+        let shops = [...new Set([...Object.keys(db.shopNames), ...db.menu.map(m => m.shop)])];  
+
+        if (shops.length === 0) {  
+            let t = translations[currentLang] || translations.my;
+            container.innerHTML = `<div style="color: #666; font-size: 13px; text-align: center; padding: 25px; background: white; border-radius: 10px;">${t.noShops}</div>`;  
+            return;  
+        }  
+
+        let html = '';  
+        shops.forEach(shop => {  
+            let displayShopName = getShopDisplayTitle(shop);  
+            let logoImg = db.shopLogos[shop] ? `<img src="${db.shopLogos[shop]}" class="shop-logo">` : `<div class="shop-logo">🛍️</div>`;  
+            let closed = isShopClosed(shop);  
+            let shopItems = db.menu.filter(m => m.shop === shop);  
+
+            let featuredItems = shopItems.filter(m => m.isFeatured === true);
+            if (featuredItems.length === 0 && shopItems.length > 0) {
+                featuredItems = shopItems.slice(0, 6);
+            }
+
+            let itemsScrollHtml = '';
+            if (featuredItems.length > 0) {
+                itemsScrollHtml += `<div class="featured-items-scroll">`;
+                featuredItems.forEach(item => {
+                    let displayTitle = getItemTitle(item);
+                    let itemImg = item.image 
+                        ? `<img src="${item.image}" class="featured-item-img" onclick="openImageModal('${item.image}')">` 
+                        : `<div class="featured-item-img" style="display:flex; align-items:center; justify-content:center; font-size:10px; color:#999;">ပုံမရှိပါ</div>`;
+
+                    itemsScrollHtml += `<div class="featured-item-box">
+                        ${itemImg}
+                        <div class="featured-item-title">${displayTitle}</div>
+                        <div class="featured-item-bottom">
+                            <span class="featured-item-price">฿${item.price}</span>
+                            <button class="mini-add-btn" onclick="handleAddToCartClick(${item.id})">+</button>
+                        </div>
+                    </div>`;
+                });
+                itemsScrollHtml += `</div>`;
+            }
+
+            let t = translations[currentLang] || translations.my;
+
+            html += `<div class="shop-showcase-card">  
+                <div class="shop-header-row">  
+                    <div class="shop-info-left" onclick="openShopMenu('${shop}')" style="cursor:pointer;">  
+                        ${logoImg}  
+                        <div>  
+                            <div class="shop-name-txt">${displayShopName}</div>  
+                            ${closed ? '<span style="font-size:10px; color:#f44336; font-weight:bold;">🔴 ခေတ္တပိတ်ထားသည်</span>' : '<span style="font-size:10px; color:#4CAF50; font-weight:bold;">🟢 ဖွင့်ထားသည်</span>'}  
+                        </div>  
+                    </div>  
+                    <button class="view-menu-link" onclick="openShopMenu('${shop}')">${t.viewMenuBtn}</button>  
+                </div>  
+                ${itemsScrollHtml}  
+            </div>`;  
+        });  
+
+        container.innerHTML = html;  
+    }  
+
+    function renderAll() {  
+        renderShopsList();  
+        renderCart();  
+        renderOrders();  
+        renderAdminShops();  
+        renderAdminAllOrders();  
+
+        if (activeShopName && document.getElementById('sec-shop-menu').style.display === 'block') {  
+            renderShopCategories();  
+            renderShopItemsContinuous();  
+        }  
+    }  
+
+    function handleExcelImport(e) {  
+        let file = e.target.files[0];  
         if (!file) return;  
         let reader = new FileReader();  
-        reader.onload = async function(e) {  
-            try {  
-                let data = new Uint8Array(e.target.result);  
-                let workbook = XLSX.read(data, { type: 'array' });  
-                let worksheet = workbook.Sheets[workbook.SheetNames[0]];  
-                let rows = XLSX.utils.sheet_to_json(worksheet, { header: 1 });  
+        reader.onload = function(evt) {  
+            let data = new Uint8Array(evt.target.result);  
+            let workbook = XLSX.read(data, {type: 'array'});  
+            let firstSheet = workbook.SheetNames[0];  
+            let rows = XLSX.utils.sheet_to_json(workbook.Sheets[firstSheet], {header: 1});  
+              
+            if (rows.length < 2) {  
+                alert('Excel ဖိုင်တွင် ဒေတာ မရှိပါခင်ဗျာ။');  
+                return;  
+            }  
 
-                let newItems = [];
-                let newShopNames = { ...db.shopNames };
-                let targetShopName = '';  
+            let newMenuItems = [];  
+            let foundShops = {};  
 
-                for (let i = 0; i < rows.length; i++) {  
-                    let r = rows[i];  
-                    if (!r || r.length === 0) continue;  
-                    let firstColVal = String(r[0] || '').trim();  
-                    if (i === 0 && (firstColVal.toLowerCase() === 'shop' || firstColVal === 'ဆိုင်')) continue;  
+            for (let i = 1; i < rows.length; i++) {  
+                let r = rows[i];  
+                if (!r || r.length === 0) continue;  
 
-                    let shop = String(r[0] || 'General Shop').trim();  
-                    let category = String(r[1] || 'ခေါက်ဆွဲ/面条').trim();  
-                    let titleMy = String(r[2] || '').trim();  
-                    let titleZh = String(r[3] || '').trim();  
-                    let titleTh = String(r[4] || '').trim();  
-                    let titleEn = String(r[5] || '').trim();  
-                    let price = parseFloat(String(r[6] || 0).replace(/[^0-9.]/g, '')) || 0;  
-                    let description = String(r[7] || '').trim();  
-                    let image = String(r[8] || '').trim();  
+                let shopName = r[0] ? String(r[0]).trim() : 'အထွေထွေ';  
+                let category = r[1] ? String(r[1]).trim() : 'ခေါက်ဆွဲ/面条';  
+                let titleMy = r[2] ? String(r[2]).trim() : '';  
+                let titleZh = r[3] ? String(r[3]).trim() : '';  
+                let titleTh = r[4] ? String(r[4]).trim() : '';  
+                let titleEn = r[5] ? String(r[5]).trim() : '';  
+                let price = r[6] ? parseFloat(r[6]) : 0;  
+                let description = r[7] ? String(r[7]).trim() : '';  
+                let image = r[8] ? String(r[8]).trim() : '';  
 
-                    if (!targetShopName && shop) targetShopName = shop;  
-
-                    if (titleMy || titleZh || titleTh || titleEn) {  
-                        newItems.push({   
-                            id: Date.now() + Math.random(),   
-                            shop: shop,  
-                            category: category,  
-                            titleMy: titleMy,  
-                            titleZh: titleZh,  
-                            titleTh: titleTh,  
-                            titleEn: titleEn,  
-                            price: price,  
-                            description: description,  
-                            image: image,
-                            isFeatured: false 
-                        });  
-
-                        if (!newShopNames[shop]) {
-                            newShopNames[shop] = { my: shop, zh: '', th: '', en: '', category: 'auto' };
-                        }
-                    }  
+                if (!foundShops[shopName]) {  
+                    foundShops[shopName] = { my: shopName, zh: '', th: '', en: '', category: 'auto' };  
                 }  
 
-                if (newItems.length > 0) {
-                    db.menu = [...db.menu, ...newItems];
-                    db.shopNames = newShopNames;
-
-                    await saveDataAsync();  
-                    renderAll();  
-                    switchTab(0);  
-                    alert(`အောင်မြင်ပါတယ်! "${getShopDisplayTitle(targetShopName) || 'ဆိုင်'}" အတွက် မီနူး ${newItems.length} ခုကို ပေါင်းထည့်လိုက်ပါပြီ။`);  
-                } else {
-                    alert('⚠️ Excel ဖိုင်ထဲတွင် မှန်ကန်သော မီနူးအချက်အလက် မတွေ့ရှိပါ။ ဖိုင်ပုံစံကို ပြန်စစ်ပါ။');
-                }
-                event.target.value = '';  
-            } catch (err) {  
-                alert('Excel ဖိုင်ဖတ်ရာတွင် Error တက်နေပါသည်။ ဖိုင်ပုံစံကို စစ်ဆေးပါ။');  
+                if (titleMy || titleZh || titleTh || titleEn) {  
+                    newMenuItems.push({  
+                        id: Date.now() + i + Math.random(),  
+                        shop: shopName,  
+                        category: category,  
+                        titleMy: titleMy,  
+                        titleZh: titleZh,  
+                        titleTh: titleTh,  
+                        titleEn: titleEn,  
+                        price: price,  
+                        description: description,  
+                        image: image,
+                        isFeatured: false
+                    });  
+                }  
             }  
+
+            db.menu = db.menu.concat(newMenuItems);  
+            Object.keys(foundShops).forEach(s => {  
+                if (!db.shopNames[s]) {  
+                    db.shopNames[s] = foundShops[s];  
+                }  
+            });  
+
+            autoFixOldDescriptions();
+            saveDataAsync();  
+            renderAll();  
+            alert(`Excel မှ မီနူးပေါင်း ${newMenuItems.length} ခုကို အောင်မြင်စွာ ထည့်သွင်းပြီးပါပြီ!`);  
+            document.getElementById('excel-file-input').value = '';  
         };  
         reader.readAsArrayBuffer(file);  
     }  
