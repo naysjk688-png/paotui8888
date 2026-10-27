@@ -532,7 +532,9 @@
             adminOrdersTitle: "📦 Customer များမှ လာသော အော်ဒါအအားလုံး စီမံရန်",
             adminOrdersSub: "အော်ဒါများကို စီမံရန် \"စီမံမည်\" ခလုတ်ကို နှိပ်ပါ -",
             addMenuTitle: "➕ မီနူးအသစ် ထည့်ရန်",
-            addMenuConfirmBtn: "➕ မီနူးအသစ် ထည့်မည်"
+            addMenuConfirmBtn: "➕ မီနူးအသစ် ထည့်မည်",
+            toppingTitle: "အသား / တွဲဖက် ရွေးချယ်ရန်",
+            toppingSelectHint: "၁ ခုရွေးရန်"
         },  
         zh: {  
             deliveryBanner: "🚀 24小时专业跑腿配送服务 | 也可直接通过 Telegram 或 WeChat 下单",
@@ -599,7 +601,9 @@
             adminOrdersTitle: "📦 管理客户所有订单",
             adminOrdersSub: "点击“管理”按钮展开订单列表 -",
             addMenuTitle: "➕ 添加新菜品",
-            addMenuConfirmBtn: "➕ 确认添加菜品"
+            addMenuConfirmBtn: "➕ 确认添加菜品",
+            toppingTitle: "选择肉类 / 附加项",
+            toppingSelectHint: "选1项"
         },  
         th: {  
             deliveryBanner: "🚀 บริการจัดส่ง 24 ชั่วโมง | สามารถสั่งซื้อผ่าน Telegram หรือ WeChat ได้โดยตรง",
@@ -666,7 +670,9 @@
             adminOrdersTitle: "📦 จัดการคำสั่งซื้อทั้งหมดของลูกค้า",
             adminOrdersSub: "คลิกปุ่ม \"จัดการ\" เพื่อเปิดดูรายการคำสั่งซื้อ -",
             addMenuTitle: "➕ เพิ่มเมนูใหม่",
-            addMenuConfirmBtn: "➕ ยืนยันเพิ่มเมนู"
+            addMenuConfirmBtn: "➕ ยืนยันเพิ่มเมนู",
+            toppingTitle: "เลือกเนื้อสัตว์ / เพิ่มเติม",
+            toppingSelectHint: "เลือก 1 อย่าง"
         },  
         en: {  
             deliveryBanner: "🚀 24/7 Delivery Service | You can also order directly via Telegram or WeChat",
@@ -733,7 +739,9 @@
             adminOrdersTitle: "📦 Manage All Customer Orders",
             adminOrdersSub: "Click \"Manage\" button to view order list -",
             addMenuTitle: "➕ Add New Menu Item",
-            addMenuConfirmBtn: "➕ Add Menu Item"
+            addMenuConfirmBtn: "➕ Add Menu Item",
+            toppingTitle: "Select Meat / Option",
+            toppingSelectHint: "Select 1"
         }  
     };  
 
@@ -1587,6 +1595,35 @@
         }  
     }  
 
+    function translateOptionName(name) {
+        let trimmed = name.trim();
+        const dict = {
+            zh: {
+                "ဝက်သား": "猪肉", "ကြက်သား": "鸡肉", "နွားသား": "牛肉", "ပင်လယ်သား": "海鲜", "ပင်လယ်စာ": "海鲜", "ထည့်ရန်": "加", "ไข่": "鸡蛋", "ကြက်ဥ": "鸡蛋"
+            },
+            th: {
+                "ဝက်သား": "หมู", "ကြက်သား": "ไก่", "နွားသား": "เนื้อ", "ပင်လယ်သား": "ทะเล", "ပင်လယ်စာ": "ทะเล", "ไข่": "ไข่", "ကြက်ဥ": "ไข่"
+            },
+            en: {
+                "ဝက်သား": "Pork", "ကြက်သား": "Chicken", "နွားသား": "Beef", "ပင်လယ်သား": "Seafood", "ပင်လယ်စာ": "Seafood", "ไข่": "Egg", "ကြက်ဥ": "Egg"
+            }
+        };
+
+        if (currentLang === 'my') return trimmed;
+        let langMap = dict[currentLang];
+        if (langMap && langMap[trimmed]) {
+            return langMap[trimmed];
+        }
+
+        // Fuzzy match for embedded terms
+        for (let key in (langMap || {})) {
+            if (trimmed.includes(key)) {
+                return trimmed.replace(key, langMap[key]);
+            }
+        }
+        return trimmed;
+    }
+
     function changeLanguage() {  
         currentLang = document.getElementById('languageSelector').value;  
         let t = translations[currentLang] || translations.my;  
@@ -2172,21 +2209,27 @@
             imgThumb.style.display = 'none';
         }
 
+        let t = translations[currentLang] || translations.my;
+
         let container = document.getElementById('topping-list-container');  
         let html = '';  
 
         optionsGroup.forEach(group => {
+            let translatedGroupTitle = (currentLang === 'my') ? group.title : (currentLang === 'zh' ? '选择肉类 / 附加项' : (currentLang === 'th' ? 'เลือกเนื้อสัตว์ / เพิ่มเติม' : 'Select Meat / Option'));
+            let translatedHint = (currentLang === 'my') ? '၁ ခုရွေးရန်' : (currentLang === 'zh' ? '选1项' : (currentLang === 'th' ? 'เลือก 1 อย่าง' : 'Select 1'));
+
             html += `<div style="margin-top:10px;">
-                <div style="font-size:12px; font-weight:bold; color:#333;">${group.title} <span class="option-tag-req">၁ ခုရွေးရန်</span></div>
+                <div style="font-size:12px; font-weight:bold; color:#333;">${translatedGroupTitle} <span class="option-tag-req">${translatedHint}</span></div>
                 <div class="option-choice-grid">`;
 
             group.choices.forEach((choice, idx) => {
-                let isSelected = (selectedMeatOption && selectedMeatOption.name === choice.name) || (idx === 0);
+                let isSelected = (selectedMeatOption && selectedMeatOption.name === choice.name) || (idx === 0 && !selectedMeatOption);
                 if (idx === 0 && !selectedMeatOption) selectedMeatOption = choice;
 
+                let translatedName = translateOptionName(choice.name);
                 let priceAddonText = choice.price > 0 ? ` (+฿${choice.price})` : '';
                 html += `<div class="option-choice-btn ${isSelected ? 'selected' : ''}" data-name="${choice.name}" onclick="selectMeatOption('${choice.name}', ${choice.price})">
-                    ${choice.name}${priceAddonText}
+                    ${translatedName}${priceAddonText}
                 </div>`;
             });
 
@@ -2223,7 +2266,10 @@
         let finalUnitPrice = basePrice + extraMeat + extraTopping;  
 
         let combinedToppings = [];
-        if (selectedMeatOption) combinedToppings.push(selectedMeatOption);
+        if (selectedMeatOption) {
+            let translatedChosenName = translateOptionName(selectedMeatOption.name);
+            combinedToppings.push({ name: translatedChosenName, price: selectedMeatOption.price });
+        }
         combinedToppings = combinedToppings.concat(selectedToppings);
 
         addToCartDirectly(pendingItemForTopping, combinedToppings, null, finalUnitPrice);  
@@ -2537,9 +2583,9 @@
 
             let featuredItems = shopItems.filter(m => m.isFeatured === true);
             if (featuredItems.length === 0 && shopItems.length > 0) {
-                featuredItems = shopItems.slice(0, 3); // ⬅️ ၃ ခုသာ ယူစေရန် ပြင်ပြီးပါပြီ
+                featuredItems = shopItems.slice(0, 3); 
             } else {
-                featuredItems = featuredItems.slice(0, 3); // ⬅️ Featured ဖြစ်နေရင်တောင် အများဆုံး ၃ ခုပဲ ပြရန်
+                featuredItems = featuredItems.slice(0, 3); 
             }
 
             let itemsScrollHtml = '';
