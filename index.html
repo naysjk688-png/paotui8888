@@ -2446,7 +2446,7 @@
         });
 
         let tgMsg = `🛒 Tachileik Delivery (大其力跑腿8888)\n`;  
-        tgMsg += `🍔 NEW FOOD ORDER\n\n`;  
+        tgMsg += `🍔 NEW FOOD ORDER (${platform.toUpperCase()})\n\n`;  
         tgMsg += `🆔 အော်ဒါနံပါတ်: #${orderNum}\n`;  
         tgMsg += `📅 နေ့စွဲ: ${newOrder.dateStr}\n\n`;  
 
@@ -2471,32 +2471,30 @@
         tgMsg += `🗺️ Map Link: ${mapLink || 'မထည့်ပါ'}\n`;  
         tgMsg += `💬 အထွေထွေမှတ်စု: ${note || 'မရှိပါ'}\n`;  
 
+        let botUrl = `https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage`;  
+        let replyMarkup = null;
+        if (cleanTgPhoneLink) {
+            replyMarkup = {  
+                inline_keyboard: [  
+                    [{ text: "💬 Customer ထံ ဆက်သွယ်ရန်", url: cleanTgPhoneLink }]  
+                ]  
+            };  
+        }
+
+        // Telegram ပို့သည်ဖြစ်စေ၊ WeChat ပို့သည်ဖြစ်စေ Group ထဲသို့ Bot မှ အလိုအလျောက် (Auto) တန်းရောက်စေမည်
+        let payloadGroup = {  
+            chat_id: TELEGRAM_GROUP_ID,  
+            text: tgMsg  
+        };
+        if (replyMarkup) payloadGroup.reply_markup = replyMarkup;
+
+        fetch(botUrl, {  
+            method: 'POST',  
+            headers: { 'Content-Type': 'application/json' },  
+            body: JSON.stringify(payloadGroup)  
+        }).catch(err => console.error("Group send error:", err));
+
         if (platform === 'telegram') {  
-            let botUrl = `https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage`;  
-              
-            let replyMarkup = null;
-            if (cleanTgPhoneLink) {
-                replyMarkup = {  
-                    inline_keyboard: [  
-                        [{ text: "💬 Customer ထံ ဆက်သွယ်ရန်", url: cleanTgPhoneLink }]  
-                    ]  
-                };  
-            }
-
-            // 1. Group ထဲသို့ Bot မှ အလိုအလျောက် (Auto) တန်းပို့မည်
-            let payloadGroup = {  
-                chat_id: TELEGRAM_GROUP_ID,  
-                text: tgMsg  
-            };
-            if (replyMarkup) payloadGroup.reply_markup = replyMarkup;
-
-            fetch(botUrl, {  
-                method: 'POST',  
-                headers: { 'Content-Type': 'application/json' },  
-                body: JSON.stringify(payloadGroup)  
-            }).catch(err => console.error("Group send error:", err));
-
-            // 2. Customer ကို Bro ၏ Personal Chat သို့ တိုက်ရိုက် ခေါ်ဆောင်သွားမည်
             let encodedMsg = encodeURIComponent(tgMsg);
             let directTgUrl = `https://t.me/${adminTelegramUser}?text=${encodedMsg}`;
 
@@ -2504,19 +2502,18 @@
             renderCart();  
             renderOrders();  
 
-            // Bro ရဲ့ Telegram Private Chat ကို ပွင့်စေမည်
             window.open(directTgUrl, '_blank');  
             switchTab(2);  
 
         } else if (platform === 'wechat') {  
             navigator.clipboard.writeText(tgMsg).then(() => {  
-                alert(`အော်ဒါအချက်အလက်များကို Copy ကူးပြီးပါပြီ! WeChat ပွင့်လာပါက တိုက်ရိုက် Paste လုပ်ပြီး စာပို့ပေးပါခင်ဗျာ။`);  
+                alert(`✅ အော်ဒါအချက်အလက်များ Group ထဲသို့ ရောက်ရှိသွားပါပြီ!\n\nWeChat ID (${adminWeChatId}) သို့ စာပို့လိုပါက စာသားများ Copy ကူးပြီးဖြစ်၍ Paste လုပ်၍ တိုက်ရိုက် စာပို့နိုင်ပါသည်။`);  
                 db.cart = [];  
                 renderCart();  
                 renderOrders();  
                 switchTab(2);  
             }).catch(() => {  
-                prompt("အောက်ပါစာသားကို ကူးယူ၍ WeChat သို့ ပို့ပေးပါ:", tgMsg);  
+                alert(`✅ အော်ဒါအချက်အလက်များ Group ထဲသို့ ရောက်ရှိသွားပါပြီ!`);  
                 db.cart = [];  
                 renderCart();  
                 renderOrders();  
